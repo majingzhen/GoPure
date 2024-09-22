@@ -11,6 +11,11 @@ type Response struct {
 	Data interface{} `json:"data"`
 }
 
+// JumpView 跳转页面
+func JumpView(c *gin.Context, view string) {
+	c.HTML(http.StatusOK, view, nil)
+}
+
 func FailWithMessage(msg string, c *gin.Context) {
 	response := Response{
 		Code: 1,
