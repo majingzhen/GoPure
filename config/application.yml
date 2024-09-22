@@ -1,0 +1,25 @@
+server:
+  model: debug
+  port: 8081
+
+logger:
+  # 日志级别
+    # debug -1
+    # info  0
+    # warn  1
+    # error 2
+    # dPanic 3
+    # panic 4
+    # fatal 5
+  level: -1
+  file_path: ./log/log.log
+
+# 数据库配置
+datasource:
+  host: 127.0.0.1
+  port: 3306
+  username: root
+  password: 123456
+  db_name: manager
+  table_prefix: ""
+  log_mode: true
