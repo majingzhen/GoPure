@@ -16,10 +16,10 @@ logger:
 
 # 数据库配置
 datasource:
-  host: 127.0.0.1
+  host: 111.229.136.223
   port: 3306
-  username: root
-  password: 123456
-  db_name: manager
+  username: GoPure
+  password: DwAsfwRWhHP62W3K
+  db_name: GoPure
   table_prefix: ""
   log_mode: true

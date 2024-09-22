@@ -1,6 +1,7 @@
 package main
 
-// main 入口
-func main() {
+import "matuto.com/GoPure/src/server"
 
+func main() {
+	server.Run()
 }
