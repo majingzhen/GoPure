@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/mojocn/base64Captcha"
 	"image/color"
@@ -15,6 +16,12 @@ type SystemAPI struct {
 	userService service.UserService
 }
 
+// JumpHomeView 跳转首页
+func (api *SystemAPI) JumpHomeView(c *gin.Context) {
+	response.JumpView(c, "index.html")
+}
+
+// JumpLoginView 跳转登录页面
 func (api *SystemAPI) JumpLoginView(c *gin.Context) {
 	response.JumpView(c, "login.html")
 }
@@ -25,7 +32,8 @@ var store = base64Captcha.DefaultMemStore
 // Login 登录
 func (api *SystemAPI) Login(c *gin.Context) {
 	var loginUserView view.LoginUserView
-	_ = c.ShouldBindBodyWithJSON(&loginUserView)
+	// 接收form表单参数
+	_ = c.ShouldBind(&loginUserView)
 
 	// 校验验证码
 	captcha := VerifyCaptcha(loginUserView.VerifyUuid, loginUserView.VerifyCode)
@@ -49,8 +57,16 @@ func (api *SystemAPI) Login(c *gin.Context) {
 		response.FailWithMessage("登录失败", c)
 		return
 	}
-
-	response.OkWithData(byUserName, c)
+	// 记录登录状态
+	session := sessions.Default(c)
+	session.Set("user", byUserName)
+	if err = session.Save(); err != nil {
+		global.Logger.Error("登录失败")
+		response.FailWithMessage("登录失败", c)
+		return
+	}
+	user := session.Get("user")
+	response.OkWithData(user, c)
 }
 
 // CaptchaImage 验证码

@@ -1,10 +1,10 @@
 package view
 
 type LoginUserView struct {
-	Account    string `json:"account"`
-	Password   string `json:"password"`
-	VerifyCode string `json:"code"`
-	VerifyUuid string `json:"uuid"`
+	Account    string `json:"account" form:"account"`
+	Password   string `json:"password" form:"password"`
+	VerifyCode string `json:"code" form:"code"`
+	VerifyUuid string `json:"uuid" form:"uuid"`
 }
 
 // CaptchaVO 验证码VO

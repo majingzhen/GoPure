@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Demo</title>
+    <title>登录</title>
     <!-- 请勿在项目正式环境中引用该 layui.css 地址 -->
     <link href="/static/layui/css/layui.css" rel="stylesheet">
 </head>
@@ -19,7 +19,7 @@
                 <div class="layui-input-prefix">
                     <i class="layui-icon layui-icon-username"></i>
                 </div>
-                <input type="text" name="username" value="" lay-verify="required" placeholder="用户名" lay-reqtext="请填写用户名" autocomplete="off" class="layui-input" lay-affix="clear">
+                <input type="text" name="account" value="" lay-verify="required" placeholder="用户名" lay-reqtext="请填写用户名" autocomplete="off" class="layui-input" lay-affix="clear">
             </div>
         </div>
         <div class="layui-form-item">
@@ -37,12 +37,12 @@
                         <div class="layui-input-prefix">
                             <i class="layui-icon layui-icon-vercode"></i>
                         </div>
-                        <input type="text" name="captcha" value="" lay-verify="required" placeholder="验证码" lay-reqtext="请填写验证码" autocomplete="off" class="layui-input" lay-affix="clear">
+                        <input type="text" name="code" value="" lay-verify="required" placeholder="验证码" lay-reqtext="请填写验证码" autocomplete="off" class="layui-input" lay-affix="clear">
                     </div>
                 </div>
                 <div class="layui-col-xs5">
                     <div style="margin-left: 10px;">
-                        <img src="https://www.oschina.net/action/user/captcha" onclick="this.src='https://www.oschina.net/action/user/captcha?t='+ new Date().getTime();">
+                        <img id="captchaImg" src="">
                     </div>
                 </div>
             </div>
@@ -68,6 +68,7 @@
 
 <!-- 请勿在项目正式环境中引用该 layui.js 地址 -->
 <script src="/static/layui/layui.js"></script>
+<script src="/static/jquery/jquery-3.7.1.min.js"></script>
 <script>
     layui.use(function(){
         var form = layui.form;
@@ -79,11 +80,62 @@
             layer.alert(JSON.stringify(field), {
                 title: '当前填写的字段值'
             });
-            // 此处可执行 Ajax 等操作
-            // …
+            // 提交表单
+            $.ajax({
+                url: '/doLogin',
+                type: 'POST',
+                data: field,
+                success: function(res) {
+                    if (res.code == 0) {
+                        layer.msg('登录成功');
+                        // 登录成功后跳转到首页
+                        window.location.href = '/';
+                    } else {
+                        layer.msg('登录失败：' + res.msg);
+                    }
+                },
+                error: function() {
+                    layer.msg('登录失败，请检查网络连接');
+                }
+            });
             return false; // 阻止默认 form 跳转
         });
     });
+// 使用ajax调用/captcha接口 接口中会返回一个id 一个验证码数据
+function getCaptcha() {
+    $.ajax({
+        url: '/captcha',
+        type: 'GET',
+        success: function(res) {
+            if (res && res.code == 0) {
+                // 假设我们有一个id为'captchaImg'的img元素来显示验证码
+                $('#captchaImg').attr('src', res.data.img);
+                // 将验证码ID存储在隐藏字段中，以便在提交表单时使用
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'uuid',
+                    value: res.data.key
+                }).appendTo('form');
+            } else {
+                layer.msg('获取验证码失败，请刷新页面重试');
+            }
+        },
+        error: function() {
+            layer.msg('获取验证码失败，请检查网络连接');
+        }
+    });
+}
+
+// 页面加载时获取验证码
+$(document).ready(function() {
+    getCaptcha();
+});
+
+// 为验证码图片添加点击事件，以便用户可以刷新验证码
+$(document).on('click', '#captchaImg', function() {
+    getCaptcha();
+});
+
 </script>
 
 </body>

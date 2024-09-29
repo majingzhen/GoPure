@@ -1,6 +1,8 @@
 package main
 
-import "matuto.com/GoPure/src/server"
+import (
+	"matuto.com/GoPure/src/server"
+)
 
 func main() {
 	server.Run()

@@ -12,6 +12,7 @@ type SystemRouter struct {
 func (r *SystemRouter) InitSystemRouter(router *gin.RouterGroup) {
 	systemRouter := router.Group("")
 	{
+		systemRouter.GET("/", r.systemApi.JumpHomeView)
 		systemRouter.GET("/login", r.systemApi.JumpLoginView)
 		systemRouter.POST("/doLogin", r.systemApi.Login)
 		systemRouter.GET("/captcha", r.systemApi.CaptchaImage)
