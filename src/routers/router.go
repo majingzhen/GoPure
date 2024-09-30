@@ -5,7 +5,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
-	"matuto.com/GoPure/src/app/model"
+	"matuto.com/GoPure/src/app/api/view"
 	"matuto.com/GoPure/src/app/routers"
 	"matuto.com/GoPure/src/framework/middleware"
 	"matuto.com/GoPure/src/global"
@@ -27,8 +27,8 @@ func (routers *Routers) InitRouter() *gin.Engine {
 	r.Use(middleware.GinLogger())
 	r.Use(gin.Recovery())
 
-	// 将User 类型 注册到gob中，允许在session中存储User类型
-	gob.Register(model.User{})
+	// 将LoginUserVO 类型 注册到gob中，允许在session中存储该类型
+	gob.Register(view.LoginUserVO{})
 	store := cookie.NewStore([]byte(global.Viper.GetString("session.secret")))
 	store.Options(sessions.Options{
 		Path:   "/",

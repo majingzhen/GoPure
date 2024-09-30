@@ -57,14 +57,40 @@ func (api *SystemAPI) Login(c *gin.Context) {
 		response.FailWithMessage("登录失败", c)
 		return
 	}
+	// 转换成LoginUserVO对象
+	loginUserVO := &view.LoginUserVO{
+		Account:  byUserName.Account,
+		UserName: byUserName.UserName,
+		Avatar:   byUserName.Avatar,
+		Email:    byUserName.Email,
+		Mobile:   byUserName.Mobile,
+	}
 	// 记录登录状态
 	session := sessions.Default(c)
-	session.Set("user", byUserName)
+	session.Set("user", loginUserVO)
 	if err = session.Save(); err != nil {
 		global.Logger.Error("登录失败")
 		response.FailWithMessage("登录失败", c)
 		return
 	}
+	user := session.Get("user")
+	response.OkWithData(user, c)
+}
+
+// Logout 退出登录
+func (api *SystemAPI) Logout(c *gin.Context) {
+	session := sessions.Default(c)
+	session.Delete("user")
+	if err := session.Save(); err != nil {
+		response.FailWithMessage("退出登录失败", c)
+		return
+	}
+	response.OkWithMessage("退出登录成功", c)
+}
+
+// GetLoginUser 获取登录用户
+func (api *SystemAPI) GetLoginUser(c *gin.Context) {
+	session := sessions.Default(c)
 	user := session.Get("user")
 	response.OkWithData(user, c)
 }

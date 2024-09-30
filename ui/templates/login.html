@@ -92,6 +92,8 @@
                         window.location.href = '/';
                     } else {
                         layer.msg('登录失败：' + res.msg);
+                        // 登录失败后刷新验证码
+                        getCaptcha();
                     }
                 },
                 error: function() {
