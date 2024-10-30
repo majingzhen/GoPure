@@ -1,156 +1,92 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>GoPure 管理系统</title>
+    <meta charset="UTF-8">
+    <title>首页</title>
     <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <script src="/static/jquery/jquery-3.7.1.min.js"></script>
+    <script src="/static/layui/layui.js"></script>
+    <script src="/static/js/request.js"></script>
+    <script src="/static/js/index.js"></script>
+    <style>
+        .layui-layout-admin .layui-body {
+            overflow: hidden;
+        }
+        .layui-body .layui-tab {
+            margin: 0;
+            height: 100%;
+        }
+        .layui-tab-content {
+            padding: 0;
+            height: calc(100% - 41px);
+        }
+        .layui-tab-item {
+            height: 100%;
+        }
+        .layui-tab-item iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            min-width: 320px;
+        }
+        .layui-tab-title li:first-child .layui-tab-close {
+            display: none;
+        }
+    </style>
 </head>
-<body>
+<body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
+    <!-- 头部 -->
     <div class="layui-header">
         <div class="layui-logo layui-hide-xs layui-bg-black">GoPure</div>
-        <!-- 头部区域（可配合layui 已有的水平导航） -->
         <ul class="layui-nav layui-layout-left">
-            <!-- 移动端显示 -->
             <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-header-event="menuLeft">
                 <i class="layui-icon layui-icon-spread-left"></i>
-            </li>
-
-            <li class="layui-nav-item layui-hide-xs"><a href="">nav 1</a></li>
-            <li class="layui-nav-item layui-hide-xs"><a href="">nav 2</a></li>
-            <li class="layui-nav-item layui-hide-xs"><a href="">nav 3</a></li>
-            <li class="layui-nav-item">
-                <a href="javascript:;">nav groups</a>
-                <dl class="layui-nav-child">
-                    <dd><a href="">menu 11</a></dd>
-                    <dd><a href="">menu 22</a></dd>
-                    <dd><a href="">menu 33</a></dd>
-                </dl>
             </li>
         </ul>
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item layui-hide layui-show-md-inline-block">
                 <a href="javascript:;">
-                    <img src="//tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg" class="layui-nav-img">
-                    <span id="user"></span>
+                    <img src="//tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg"
+                         class="layui-nav-img">
+                    <span id="userName"></span>
                 </a>
                 <dl class="layui-nav-child">
-                    <dd><a href="">Your Profile</a></dd>
-                    <dd><a href="">Settings</a></dd>
-                    <dd><a href="javascript:;" onclick="logout()">Sign out</a></dd>
+                    <dd><a href="javascript:;" lay-href="/user/profile">个人信息</a></dd>
+                    <dd><a href="javascript:;" lay-href="/user/password">修改密码</a></dd>
+                    <dd><a href="javascript:void(0)" onclick="logout()">退出登录</a></dd>
                 </dl>
-            </li>
-            <li class="layui-nav-item" lay-header-event="menuRight" lay-unselect>
-                <a href="javascript:;">
-                    <i class="layui-icon layui-icon-more-vertical"></i>
-                </a>
             </li>
         </ul>
     </div>
 
+    <!-- 左侧导航 -->
     <div class="layui-side layui-bg-black">
         <div class="layui-side-scroll">
-            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-            <ul class="layui-nav layui-nav-tree" lay-filter="test">
-                <li class="layui-nav-item layui-nav-itemed">
-                    <a class="" href="javascript:;">menu group 1</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:;">menu 1</a></dd>
-                        <dd><a href="javascript:;">menu 2</a></dd>
-                        <dd><a href="javascript:;">menu 3</a></dd>
-                        <dd><a href="">the links</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item">
-                    <a href="javascript:;">menu group 2</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:;">list 1</a></dd>
-                        <dd><a href="javascript:;">list 2</a></dd>
-                        <dd><a href="">超链接</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item"><a href="javascript:;">click menu item</a></li>
-                <li class="layui-nav-item"><a href="">the links</a></li>
+            <ul class="layui-nav layui-nav-tree" lay-filter="menuTree" id="menuTree">
+                <!-- 菜单将通过JS动态插入这里 -->
             </ul>
         </div>
     </div>
 
+    <!-- 主体内容 -->
     <div class="layui-body">
-        <!-- 内容主体区域 -->
-        <div style="padding: 15px;">内容主体区域。记得修改 layui.css 和 js 的路径</div>
+        <div class="layui-tab" lay-filter="mainTabs" lay-allowClose="true">
+            <ul class="layui-tab-title">
+                <li lay-id="home" class="layui-this">首页</li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    <iframe src="/welcome" frameborder="0" class="layui-anim layui-anim-upbit"></iframe>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <!-- 底部 -->
     <div class="layui-footer">
-        <!-- 底部固定区域 -->
-        底部固定区域
+        © GoPure Admin
     </div>
 </div>
-<script src="/static/layui/layui.js"></script>
-<script src="/static/jquery/jquery-3.7.1.min.js"></script>
-<script src="/static/js/request.js"></script>
-<script>
-    //JS
-    layui.use(['element', 'layer', 'util'], function(){
-        var element = layui.element
-            ,layer = layui.layer
-            ,util = layui.util
-            ,$ = layui.$;
-
-        //头部事件
-        util.event('lay-header-event', {
-            //左侧菜单事件
-            menuLeft: function(othis){
-                layer.msg('展开左侧菜单的操作', {icon: 0});
-            }
-            ,menuRight: function(){
-                layer.open({
-                    type: 1
-                    ,content: '<div style="padding: 15px;">处理右侧面板的操作</div>'
-                    ,area: ['260px', '100%']
-                    ,offset: 'rt' //右上角
-                    ,anim: 5
-                    ,shadeClose: true
-                });
-            }
-        });
-    });
-    // 获取登录用户
-    function getLoginUser() {
-        $.ajax({
-            url: "/getLoginUser",
-            type: "GET",
-            success: function(res) {
-                var user = res.data;
-                console.log(user);
-                // 将用户信息存储到本地缓存中
-                localStorage.setItem('user', JSON.stringify(user));
-                // 将用户名显示在页面上
-                $("#user").text(user.account);
-            },
-            error: function() {
-                console.log("获取登录用户失败");
-                // 跳转到登录页面
-                window.location.href = "/login";
-            }
-        });
-    }
-    // 退出登录
-    function logout() {
-        $.ajax({
-            url: "/logout",
-            type: "GET",
-            success: function(res) {
-                // 清除本地缓存
-                localStorage.removeItem('user');
-                // 跳转到登录页面
-                window.location.href = "/login";
-            }
-        });
-    }
-    $(document).ready(function() {
-        getLoginUser();
-    });
-</script>
 </body>
 </html>

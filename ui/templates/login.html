@@ -1,144 +1,124 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
     <title>登录</title>
-    <!-- 请勿在项目正式环境中引用该 layui.css 地址 -->
-    <link href="/static/layui/css/layui.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <script src="/static/jquery/jquery-3.7.1.min.js"></script>
+    <script src="/static/layui/layui.js"></script>
+    <script src="/static/js/request.js"></script>
+    <style>
+        body {
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            width: 400px;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .login-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 24px;
+            font-weight: 500;
+        }
+        .layui-form-item {
+            margin-bottom: 25px;
+        }
+        .layui-input {
+            height: 40px;
+            line-height: 40px;
+        }
+        .layui-btn {
+            width: 100%;
+            height: 40px;
+            line-height: 40px;
+            background-color: #009688;
+        }
+        .verify-container {
+            display: flex;
+            gap: 10px;
+        }
+        .verify-input {
+            flex: 1;
+        }
+        .verify-img {
+            height: 40px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-<style>
-    .demo-login-container{width: 320px; margin: 21px auto 0;}
-    .demo-login-other .layui-icon{position: relative; display: inline-block; margin: 0 2px; top: 2px; font-size: 26px;}
-</style>
-<form class="layui-form">
-    <div class="demo-login-container">
+<div class="login-container">
+    <div class="login-title">系统登录</div>
+    <form class="layui-form" action="">
         <div class="layui-form-item">
-            <div class="layui-input-wrap">
-                <div class="layui-input-prefix">
-                    <i class="layui-icon layui-icon-username"></i>
-                </div>
-                <input type="text" name="account" value="" lay-verify="required" placeholder="用户名" lay-reqtext="请填写用户名" autocomplete="off" class="layui-input" lay-affix="clear">
+            <div class="layui-input-block" style="margin-left: 0;">
+                <input type="text" name="account" required lay-verify="required" placeholder="请输入账号"
+                       autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <div class="layui-input-wrap">
-                <div class="layui-input-prefix">
-                    <i class="layui-icon layui-icon-password"></i>
-                </div>
-                <input type="password" name="password" value="" lay-verify="required" placeholder="密   码" lay-reqtext="请填写密码" autocomplete="off" class="layui-input" lay-affix="eye">
+            <div class="layui-input-block" style="margin-left: 0;">
+                <input type="password" name="password" required lay-verify="required" placeholder="请输入密码"
+                       autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <div class="layui-row">
-                <div class="layui-col-xs7">
-                    <div class="layui-input-wrap">
-                        <div class="layui-input-prefix">
-                            <i class="layui-icon layui-icon-vercode"></i>
-                        </div>
-                        <input type="text" name="code" value="" lay-verify="required" placeholder="验证码" lay-reqtext="请填写验证码" autocomplete="off" class="layui-input" lay-affix="clear">
-                    </div>
-                </div>
-                <div class="layui-col-xs5">
-                    <div style="margin-left: 10px;">
-                        <img id="captchaImg" src="">
-                    </div>
-                </div>
+            <div class="layui-input-block verify-container" style="margin-left: 0;">
+                <input type="text" name="verifyCode" required lay-verify="required" placeholder="请输入验证码"
+                       autocomplete="off" class="layui-input verify-input">
+                <img id="captchaImg" class="verify-img" alt="验证码">
+                <input type="hidden" name="verifyUuid" id="verifyUuid">
             </div>
         </div>
         <div class="layui-form-item">
-            <input type="checkbox" name="remember" lay-skin="primary" title="记住密码">
-            <a href="#forget" style="float: right; margin-top: 7px;">忘记密码？</a>
+            <div class="layui-input-block" style="margin-left: 0;">
+                <button class="layui-btn" lay-submit lay-filter="loginForm">登录</button>
+            </div>
         </div>
-        <div class="layui-form-item">
-            <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="demo-login">登录</button>
-        </div>
-        <div class="layui-form-item demo-login-other">
-            <label>社交账号登录</label>
-            <span style="padding: 0 21px 0 6px;">
-        <a href="javascript:;"><i class="layui-icon layui-icon-login-qq" style="color: #3492ed;"></i></a>
-        <a href="javascript:;"><i class="layui-icon layui-icon-login-wechat" style="color: #4daf29;"></i></a>
-        <a href="javascript:;"><i class="layui-icon layui-icon-login-weibo" style="color: #cf1900;"></i></a>
-      </span>
-            或 <a href="#reg">注册帐号</a>
-        </div>
-    </div>
-</form>
+    </form>
+</div>
 
-<!-- 请勿在项目正式环境中引用该 layui.js 地址 -->
-<script src="/static/layui/layui.js"></script>
-<script src="/static/jquery/jquery-3.7.1.min.js"></script>
 <script>
-    layui.use(function(){
+    layui.use(['form', 'layer'], function () {
         var form = layui.form;
         var layer = layui.layer;
-        // 提交事件
-        form.on('submit(demo-login)', function(data){
-            var field = data.field; // 获取表单字段值
-            // 显示填写结果，仅作演示用
-            layer.alert(JSON.stringify(field), {
-                title: '当前填写的字段值'
-            });
-            // 提交表单
-            $.ajax({
-                url: '/doLogin',
-                type: 'POST',
-                data: field,
-                success: function(res) {
-                    if (res.code == 0) {
-                        layer.msg('登录成功');
-                        // 登录成功后跳转到首页
-                        window.location.href = '/';
-                    } else {
-                        layer.msg('登录失败：' + res.msg);
-                        // 登录失败后刷新验证码
-                        getCaptcha();
-                    }
-                },
-                error: function() {
-                    layer.msg('登录失败，请检查网络连接');
-                }
-            });
-            return false; // 阻止默认 form 跳转
+
+        // 页面加载时获取验证码
+        getCaptcha();
+        // 点击验证码图片刷新
+        $('#captchaImg').click(function () {
+            getCaptcha();
+        });
+        // 监听提交
+        form.on('submit(loginForm)', function (data) {
+            request.form('/doLogin', data.field)
+                .then(res => {
+                    window.location.href = '/';
+                })
+                .catch(() => {
+                    getCaptcha();
+                });
+            return false;
         });
     });
-// 使用ajax调用/captcha接口 接口中会返回一个id 一个验证码数据
-function getCaptcha() {
-    $.ajax({
-        url: '/captcha',
-        type: 'GET',
-        success: function(res) {
-            if (res && res.code == 0) {
-                // 假设我们有一个id为'captchaImg'的img元素来显示验证码
+    // 获取验证码
+    function getCaptcha() {
+        request.get('/captcha')
+            .then(res => {
                 $('#captchaImg').attr('src', res.data.img);
-                // 将验证码ID存储在隐藏字段中，以便在提交表单时使用
-                $('<input>').attr({
-                    type: 'hidden',
-                    name: 'uuid',
-                    value: res.data.key
-                }).appendTo('form');
-            } else {
-                layer.msg('获取验证码失败，请刷新页面重试');
-            }
-        },
-        error: function() {
-            layer.msg('获取验证码失败，请检查网络连接');
-        }
-    });
-}
-
-// 页面加载时获取验证码
-$(document).ready(function() {
-    getCaptcha();
-});
-
-// 为验证码图片添加点击事件，以便用户可以刷新验证码
-$(document).on('click', '#captchaImg', function() {
-    getCaptcha();
-});
-
+                $('#verifyUuid').val(res.data.key);
+            });
+    }
 </script>
-
 </body>
 </html>

@@ -22,6 +22,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			} else {
 				c.Redirect(http.StatusFound, "/login")
 			}
+			c.Abort()
 			return
 		}
 		c.Next()

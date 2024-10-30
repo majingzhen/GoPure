@@ -8,6 +8,8 @@ import (
 	"matuto.com/GoPure/src/global"
 )
 
+var User = new(UserDAO)
+
 type UserDAO struct{}
 
 // GetUserById 根据id获取用户信息
@@ -32,18 +34,29 @@ func (dao *UserDAO) Page(req view.UserReqPageVO) (page *common.PageInfo, err err
 	if req.Account != "" {
 		db.Where("account like ?", "%"+req.Account+"%")
 	}
+	if req.Status != "" {
+		db.Where("status = ?", req.Status)
+	}
+	if req.UserName != "" {
+		db.Where("user_name like ?", "%"+req.UserName+"%")
+	}
 	page = common.CreatePageInfo(req.PageNum, req.PageSize)
 	if err = db.Count(&page.Total).Error; err != nil {
 		return
 	}
 	// 计算分页信息
 	page.Calculate()
-	// 生成排序信息
-	if req.OrderByColumn != "" {
-		db = db.Order(req.OrderByColumn + " " + req.IsAsc)
-	}
 	var dataList []*model.User
 	err = db.Offset(page.Offset).Limit(page.Limit).Find(&dataList).Error
 	page.Rows = dataList
 	return
+}
+
+// CheckAccountExists 检查账号是否已存在
+func (dao *UserDAO) CheckAccountExists(tx *gorm.DB, account string) (bool, error) {
+	var count int64
+	err := tx.Model(&model.User{}).
+		Where("account = ?", account).
+		Count(&count).Error
+	return count > 0, err
 }

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>分配权限</title>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <script src="/static/jquery/jquery-3.7.1.min.js"></script>
+    <script src="/static/layui/layui.js"></script>
+    <script src="/static/js/request.js"></script>
+</head>
+<body style="padding: 20px;">
+    <form class="layui-form" lay-filter="authForm">
+        <input type="hidden" name="id">
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" class="layui-input" readonly>
+            </div>
+        </div>
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色编码</label>
+            <div class="layui-input-block">
+                <input type="text" name="code" class="layui-input" readonly>
+            </div>
+        </div>
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">菜单权限</label>
+            <div class="layui-input-block">
+                <div id="menuTree"></div>
+            </div>
+        </div>
+        
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="authForm">保存</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        layui.config({
+            base: '/static/layui/lay/modules/'
+        }).extend({
+            authtree: 'authtree'
+        }).use(['form', 'layer', 'authtree'], function(){
+            var form = layui.form;
+            var layer = layui.layer;
+            var authtree = layui.authtree;
+            var roleId = getUrlParam('id');
+            
+            // 加载角色数据
+            loadRoleData();
+            
+            // 监听提交
+            form.on('submit(authForm)', function(data){
+                // 获取选中的菜单ID
+                var menuIds = authtree.getChecked('#menuTree');
+                
+                // 提交保存
+                request.post('/role/saveMenus', {
+                    id: roleId,
+                    menuIds: menuIds
+                }).then(() => {
+                    layer.msg('保存成功');
+                    // 关闭弹窗并刷新父页面
+                    var index = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(index);
+                });
+                return false;
+            });
+            
+            // 加载角色数据
+            function loadRoleData() {
+                if (!roleId) return;
+                
+                // 获取角色信息
+                request.get('/role/get', { id: roleId })
+                    .then(res => {
+                        // 填充表单数据
+                        form.val('authForm', res.data);
+                        
+                        // 加载菜单树
+                        loadMenuTree(res.data.menuIds || []);
+                    });
+            }
+            
+            // 加载菜单树
+            function loadMenuTree(checkedIds) {
+                request.get('/role/getMenuTree', { menuType: 1 }) // 1表示后台菜单
+                    .then(res => {
+                        // 转换数据结构
+                        var treeData = convertMenuData(res.data);
+                        
+                        // 渲染树
+                        authtree.render('#menuTree', treeData, {
+                            inputname: 'menuIds[]',
+                            layfilter: 'menuTree',
+                            openall: true,
+                            autowidth: true,
+                            checkedIds: checkedIds
+                        });
+                    });
+            }
+            
+            // 转换菜单数据为authtree需要的格式
+            function convertMenuData(menus) {
+                return menus.map(function(menu) {
+                    var node = {
+                        name: menu.name,
+                        value: menu.id,
+                        checked: false
+                    };
+                    
+                    if (menu.children && menu.children.length > 0) {
+                        node.list = convertMenuData(menu.children);
+                    }
+                    
+                    return node;
+                });
+            }
+            
+            // 获取URL参数
+            function getUrlParam(name) {
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                var r = window.location.search.substr(1).match(reg);
+                if (r != null) return decodeURI(r[2]);
+                return null;
+            }
+        });
+    </script>
+</body>
+</html> 

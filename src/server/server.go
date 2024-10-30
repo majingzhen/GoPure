@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"matuto.com/GoPure/src/global"
-	"matuto.com/GoPure/src/routers"
+	"matuto.com/GoPure/src/router"
 	"matuto.com/GoPure/src/utils"
 	"net/http"
 	"os"
@@ -35,7 +35,7 @@ func Run() {
 	// 关闭日志颜色
 	gin.DisableConsoleColor()
 	// 创建一个gin引擎
-	router := new(routers.Routers).InitRouter()
+	router := new(router.Router).InitRouter()
 	// 获取端口号
 	port := global.Viper.GetInt("server.port")
 	// 创建一个HTTP服务

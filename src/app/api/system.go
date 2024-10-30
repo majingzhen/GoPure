@@ -6,15 +6,17 @@ import (
 	"github.com/mojocn/base64Captcha"
 	"image/color"
 	"matuto.com/GoPure/src/app/api/view"
+	"matuto.com/GoPure/src/app/model"
 	"matuto.com/GoPure/src/app/service"
 	"matuto.com/GoPure/src/common/response"
 	"matuto.com/GoPure/src/global"
 	"matuto.com/GoPure/src/utils"
 )
 
-type SystemAPI struct {
-	userService service.UserService
-}
+var System = new(SystemAPI)
+
+// SystemAPI 系统api
+type SystemAPI struct{}
 
 // JumpHomeView 跳转首页
 func (api *SystemAPI) JumpHomeView(c *gin.Context) {
@@ -45,7 +47,7 @@ func (api *SystemAPI) Login(c *gin.Context) {
 		response.FailWithMessage("账号密码不能为空", c)
 		return
 	}
-	byUserName, err := api.userService.GetByAccount(loginUserView.Account)
+	byUserName, err := service.User.GetByAccount(loginUserView.Account)
 	if err != nil || byUserName == nil {
 		response.FailWithMessage("用户不存在", c)
 		return
@@ -57,6 +59,18 @@ func (api *SystemAPI) Login(c *gin.Context) {
 		response.FailWithMessage("登录失败", c)
 		return
 	}
+	// 查询角色
+	roles, err := service.Role.GetByUserId(byUserName.Id)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	// 查询菜单
+	menus, err := service.Menu.GetByUserId(byUserName.Id, model.MenuPositionBackend)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	// 转换成LoginUserVO对象
 	loginUserVO := &view.LoginUserVO{
 		Account:  byUserName.Account,
@@ -64,6 +78,8 @@ func (api *SystemAPI) Login(c *gin.Context) {
 		Avatar:   byUserName.Avatar,
 		Email:    byUserName.Email,
 		Mobile:   byUserName.Mobile,
+		Roles:    roles,
+		Menus:    menus,
 	}
 	// 记录登录状态
 	session := sessions.Default(c)
@@ -138,4 +154,9 @@ func VerifyCaptcha(id string, VerifyValue string) bool {
 	} else {
 		return false
 	}
+}
+
+// JumpWelcomeView 跳转欢迎页面
+func (api *SystemAPI) JumpWelcomeView(c *gin.Context) {
+	response.JumpView(c, "welcome.html")
 }

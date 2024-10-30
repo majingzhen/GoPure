@@ -1,6 +1,6 @@
 server:
   model: debug
-  port: 8081
+  port: 18080
 
 logger:
   # 日志级别

@@ -31,7 +31,6 @@ func CreatePageInfo(pageNum, pageSize int) *PageInfo {
 		Limit:    pageSize,
 		Offset:   (pageNum - 1) * pageSize,
 	}
-
 }
 
 // Calculate 定义一个方法来计算 Limit 和 Offset

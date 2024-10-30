@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>角色表单</title>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <script src="/static/jquery/jquery-3.7.1.min.js"></script>
+    <script src="/static/layui/layui.js"></script>
+    <script src="/static/js/request.js"></script>
+</head>
+<body style="padding: 20px;">
+    <form class="layui-form" lay-filter="roleForm">
+        <input type="hidden" name="id">
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色名</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" required lay-verify="required" 
+                       placeholder="请输入角色名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色编码</label>
+            <div class="layui-input-block">
+                <input type="text" name="code" required lay-verify="required" 
+                       placeholder="请输入���色编码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">描述</label>
+            <div class="layui-input-block">
+                <textarea name="description" placeholder="请输入描述" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="roleForm">保存</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        layui.use(['form', 'layer'], function(){
+            var form = layui.form;
+            var layer = layui.layer;
+            var roleId = getUrlParam('id');
+            
+            // 如果是编辑，加载角色数据
+            if (roleId) {
+                loadRoleData();
+            }
+            
+            // 监听提交
+            form.on('submit(roleForm)', function(data){
+                var url = roleId ? '/role/update' : '/role/add';
+                request.post(url, data.field)
+                    .then(() => {
+                        layer.msg('保存成功');
+                        // 关闭弹窗并刷新父页面
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    });
+                return false;
+            });
+            
+            // 加载角色数据
+            function loadRoleData() {
+                request.get('/role/get', { id: roleId })
+                    .then(res => {
+                        form.val('roleForm', res.data);
+                    });
+            }
+            
+            // 获取URL参数
+            function getUrlParam(name) {
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                var r = window.location.search.substr(1).match(reg);
+                if (r != null) return decodeURI(r[2]);
+                return null;
+            }
+        });
+    </script>
+</body>
+</html> 

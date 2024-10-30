@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>角色管理</title>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <script src="/static/jquery/jquery-3.7.1.min.js"></script>
+    <script src="/static/layui/layui.js"></script>
+    <script src="/static/js/request.js"></script>
+</head>
+<body>
+    <!-- 搜索栏 -->
+    <div class="layui-form layui-form-pane" style="margin: 15px;">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">角色名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="name" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">角色编码</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="code" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <button class="layui-btn" lay-submit lay-filter="searchForm">
+                    <i class="layui-icon layui-icon-search"></i> 搜索
+                </button>
+                <button class="layui-btn layui-btn-primary" type="reset">
+                    <i class="layui-icon layui-icon-refresh"></i> 重置
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 工具栏 -->
+    <div class="layui-btn-container" style="margin: 15px;">
+        <button class="layui-btn layui-btn-normal" lay-event="add">
+            <i class="layui-icon layui-icon-add-1"></i> 新增
+        </button>
+        <button class="layui-btn layui-btn-danger" lay-event="batchDel">
+            <i class="layui-icon layui-icon-delete"></i> 批量删除
+        </button>
+    </div>
+
+    <!-- 数据表格 -->
+    <table id="roleTable" lay-filter="roleTable"></table>
+
+    <!-- 表格工具栏模板 -->
+    <script type="text/html" id="tableToolbar">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm" lay-event="edit">
+                <i class="layui-icon layui-icon-edit"></i>
+            </button>
+            <button class="layui-btn layui-btn-sm" lay-event="auth">
+                <i class="layui-icon layui-icon-auz"></i>
+            </button>
+            <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">
+                <i class="layui-icon layui-icon-delete"></i>
+            </button>
+        </div>
+    </script>
+
+    <script>
+        layui.use(['table', 'form', 'layer'], function(){
+            var table = layui.table;
+            var form = layui.form;
+            var layer = layui.layer;
+            
+            // 渲染表格
+            table.render({
+                elem: '#roleTable',
+                url: '/role/list',
+                toolbar: true,
+                defaultToolbar: ['filter', 'exports', 'print'],
+                cols: [[
+                    {type: 'checkbox', fixed: 'left'},
+                    {field: 'id', title: 'ID', sort: true, width: 80},
+                    {field: 'name', title: '角色名'},
+                    {field: 'code', title: '角色编码'},
+                    {field: 'description', title: '描述'},
+                    {field: 'createTime', title: '创建时间', sort: true},
+                    {title: '操作', toolbar: '#tableToolbar', width: 180}
+                ]],
+                page: true,
+                limit: 10,
+                limits: [10, 20, 50, 100]
+            });
+
+            // 搜索表单提交
+            form.on('submit(searchForm)', function(data){
+                table.reload('roleTable', {
+                    where: data.field,
+                    page: {curr: 1}
+                });
+                return false;
+            });
+
+            // 表格工具栏事件
+            table.on('toolbar(roleTable)', function(obj){
+                var checkStatus = table.checkStatus(obj.config.id);
+                var data = checkStatus.data;
+                
+                switch(obj.event){
+                    case 'add':
+                        openRoleForm();
+                        break;
+                    case 'batchDel':
+                        if(data.length === 0){
+                            layer.msg('请选择要删除的数据');
+                            return;
+                        }
+                        var ids = data.map(item => item.id);
+                        layer.confirm('确定删除选中的角色吗？', function(index){
+                            deleteRoles(ids);
+                            layer.close(index);
+                        });
+                        break;
+                }
+            });
+
+            // 表格行工具事件
+            table.on('tool(roleTable)', function(obj){
+                var data = obj.data;
+                if(obj.event === 'del'){
+                    layer.confirm('确定删除该角色吗？', function(index){
+                        deleteRoles([data.id]);
+                        layer.close(index);
+                    });
+                } else if(obj.event === 'edit'){
+                    openRoleForm(data.id);
+                } else if(obj.event === 'auth'){
+                    openAuthForm(data.id);
+                }
+            });
+
+            // 打开角色表单
+            function openRoleForm(id) {
+                var title = id ? '编辑角色' : '新增角色';
+                var url = '/role/form' + (id ? '?id=' + id : '');
+                layer.open({
+                    type: 2,
+                    title: title,
+                    area: ['500px', '400px'],
+                    content: url,
+                    end: function(){
+                        table.reload('roleTable');
+                    }
+                });
+            }
+
+            // 打开权限分配表单
+            function openAuthForm(id) {
+                layer.open({
+                    type: 2,
+                    title: '分配权限',
+                    area: ['400px', '600px'],
+                    content: '/role/auth?id=' + id,
+                    end: function(){
+                        table.reload('roleTable');
+                    }
+                });
+            }
+
+            // 删除角色
+            function deleteRoles(ids) {
+                request.post('/role/delete', {ids: ids})
+                    .then(() => {
+                        layer.msg('删除成功');
+                        table.reload('roleTable');
+                    });
+            }
+        });
+    </script>
+</body>
+</html> 

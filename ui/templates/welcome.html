@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页</title>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <style>
+        .welcome-container {
+            padding: 20px;
+        }
+        .welcome-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .welcome-content {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.8;
+        }
+        .welcome-card {
+            margin-top: 20px;
+        }
+        .welcome-card .layui-card-header {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-container">
+        <div class="welcome-title">欢迎使用GoPure后台管理系统</div>
+        <div class="welcome-content">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md6">
+                    <div class="layui-card welcome-card">
+                        <div class="layui-card-header">系统信息</div>
+                        <div class="layui-card-body">
+                            <table class="layui-table" lay-skin="nob">
+                                <colgroup>
+                                    <col width="120">
+                                    <col>
+                                </colgroup>
+                                <tbody>
+                                    <tr>
+                                        <td>系统名称</td>
+                                        <td>GoPure后台管理系统</td>
+                                    </tr>
+                                    <tr>
+                                        <td>当前版本</td>
+                                        <td>v1.0.0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>开发语言</td>
+                                        <td>Go + LayUi</td>
+                                    </tr>
+                                    <tr>
+                                        <td>服务器环境</td>
+                                        <td>Go 1.18</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md6">
+                    <div class="layui-card welcome-card">
+                        <div class="layui-card-header">最新动态</div>
+                        <div class="layui-card-body">
+                            <ul class="layui-timeline">
+                                <li class="layui-timeline-item">
+                                    <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                                    <div class="layui-timeline-content layui-text">
+                                        <h3 class="layui-timeline-title">2024-01-01</h3>
+                                        <p>系统上线运行</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
