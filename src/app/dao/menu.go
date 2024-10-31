@@ -1,9 +1,8 @@
 package dao
 
 import (
-	"gorm.io/gorm"
+	"matuto.com/GoPure/src/app/api/view"
 	"matuto.com/GoPure/src/app/model"
-	"matuto.com/GoPure/src/common"
 	"matuto.com/GoPure/src/global"
 )
 
@@ -11,73 +10,74 @@ var Menu = new(MenuDAO)
 
 type MenuDAO struct{}
 
-// GetMenuById 根据id获取菜单信息
-func (dao *MenuDAO) GetMenuById(tx *gorm.DB, id string) (*model.Menu, error) {
-	menu := &model.Menu{}
-	err := tx.Where("id = ?", id).First(menu).Error
-	return menu, err
-}
-
-// GetMenusByPid 根据父ID获取子菜单列表
-func (dao *MenuDAO) GetMenusByPid(tx *gorm.DB, pid string) ([]*model.Menu, error) {
-	var menus []*model.Menu
-	err := tx.Where("pid = ?", pid).Order("seq").Find(&menus).Error
-	return menus, err
-}
-
-// Page 获取菜单分页列表
-func (dao *MenuDAO) Page(pageNum, pageSize int, query map[string]interface{}) (*common.PageInfo, error) {
+// List 获取菜单列表
+func (d *MenuDAO) List(req view.MenuListReqVO) ([]model.Menu, error) {
+	var menus []model.Menu
 	db := global.GormDao.Model(&model.Menu{})
 
-	// 添加查询条件
-	if name, ok := query["name"].(string); ok && name != "" {
-		db = db.Where("name LIKE ?", "%"+name+"%")
+	// 根据条件查询
+	if req.Name != "" {
+		db = db.Where("name LIKE ?", "%"+req.Name+"%")
 	}
-	if status, ok := query["status"].(int); ok {
-		db = db.Where("status = ?", status)
+	if req.Status != "" {
+		db = db.Where("status = ?", req.Status)
 	}
-	if menuType, ok := query["menuType"].(int); ok {
-		db = db.Where("menu_type = ?", menuType)
+	if req.MenuType != "" {
+		db = db.Where("menu_type = ?", req.MenuType)
 	}
-
-	page := common.CreatePageInfo(pageNum, pageSize)
-	if err := db.Count(&page.Total).Error; err != nil {
-		return nil, err
+	if req.MenuPosition != "" {
+		db = db.Where("menu_position = ?", req.MenuPosition)
 	}
 
-	page.Calculate()
-	var dataList []*model.Menu
-	err := db.Order("seq").Offset(page.Offset).Limit(page.Limit).Find(&dataList).Error
-	page.Rows = dataList
-	return page, err
+	err := db.Order("seq").Find(&menus).Error
+	return menus, err
 }
 
-// GetMenusByPidAndType 根据父ID和菜单位置获取子菜单列表
-func (dao *MenuDAO) GetMenusByPidAndType(tx *gorm.DB, pid string, menuPosition int) ([]*model.Menu, error) {
-	var menus []*model.Menu
-	err := tx.Where("pid = ? AND menu_position = ? AND status = ?", pid, menuPosition, model.StatusEnabled).
+// GetById 根据ID获取菜单
+func (d *MenuDAO) GetById(id string) (*model.Menu, error) {
+	var menu model.Menu
+	err := global.GormDao.First(&menu, "id = ?", id).Error
+	return &menu, err
+}
+
+// Add 添加菜单
+func (d *MenuDAO) Add(menu *model.Menu) error {
+	return global.GormDao.Create(menu).Error
+}
+
+// Update 更新菜单
+func (d *MenuDAO) Update(menu *model.Menu) error {
+	return global.GormDao.Save(menu).Error
+}
+
+// Delete 删除菜单
+func (d *MenuDAO) Delete(id string) error {
+	return global.GormDao.Delete(&model.Menu{}, "id = ?", id).Error
+}
+
+// HasChildren 检查是否有子菜单
+func (d *MenuDAO) HasChildren(id string) (bool, error) {
+	var count int64
+	err := global.GormDao.Model(&model.Menu{}).Where("pid = ?", id).Count(&count).Error
+	return count > 0, err
+}
+
+// GetByRoleId 获取角色菜单
+func (d *MenuDAO) GetByRoleId(roleId int) ([]model.Menu, error) {
+	var menus []model.Menu
+	err := global.GormDao.Model(&model.Menu{}).
+		Where("id in (select menu_id from p_role_menu where role_id = ?)", roleId).
 		Order("seq").
 		Find(&menus).Error
 	return menus, err
 }
 
-// GetAllEnabledMenusByType 获取所有启用的指定位置的菜单
-func (dao *MenuDAO) GetAllEnabledMenusByType(tx *gorm.DB, menuPosition string) ([]*model.Menu, error) {
-	var menus []*model.Menu
-	err := tx.Where("status = ? AND menu_position = ?", model.StatusEnabled, menuPosition).
+// GetByRoleIds 获取多个角色的菜单
+func (d *MenuDAO) GetByRoleIds(roleIds []int) ([]model.Menu, error) {
+	var menus []model.Menu
+	err := global.GormDao.Model(&model.Menu{}).
+		Where("id in (select menu_id from p_role_menu where role_id in ?)", roleIds).
 		Order("seq").
-		Find(&menus).Error
-	return menus, err
-}
-
-// GetMenusByRoleIdAndType 根据角色ID和菜单位置获取菜单列表
-func (dao *MenuDAO) GetMenusByRoleIdAndType(tx *gorm.DB, roleId int, menuPosition string) ([]*model.Menu, error) {
-	var menus []*model.Menu
-	err := tx.Table("p_menu").
-		Joins("JOIN p_role_menu ON p_menu.id = p_role_menu.menu_id").
-		Where("p_role_menu.role_id = ? AND p_menu.menu_position = ? AND p_menu.status = ?",
-			roleId, menuPosition, model.StatusEnabled).
-		Order("p_menu.seq").
 		Find(&menus).Error
 	return menus, err
 }

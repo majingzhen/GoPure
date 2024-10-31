@@ -2,6 +2,7 @@ package dao
 
 import (
 	"gorm.io/gorm"
+	"matuto.com/GoPure/src/app/api/view"
 	"matuto.com/GoPure/src/app/model"
 	"matuto.com/GoPure/src/common"
 	"matuto.com/GoPure/src/global"
@@ -11,24 +12,85 @@ var Role = new(RoleDAO)
 
 type RoleDAO struct{}
 
-// GetRoleById 根据id获取角色
-func (dao *RoleDAO) GetRoleById(tx *gorm.DB, id int) (*model.Role, error) {
-	role := &model.Role{}
-	err := tx.Where("id = ?", id).First(role).Error
-	return role, err
+// Page 分页查询角色
+func (d *RoleDAO) Page(req view.RoleReqPageVO) (*common.PageInfo, error) {
+	var roles []model.Role
+	var total int64
+
+	// 构建查询条件
+	db := global.GormDao.Model(&model.Role{})
+	if req.Name != "" {
+		db = db.Where("name LIKE ?", "%"+req.Name+"%")
+	}
+	if req.Code != "" {
+		db = db.Where("code LIKE ?", "%"+req.Code+"%")
+	}
+
+	// 查询总数
+	err := db.Count(&total).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// 分页查询数据
+	offset := (req.PageNum - 1) * req.PageSize
+	err = db.Offset(offset).Limit(req.PageSize).Order("id desc").Find(&roles).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// 构建分页结果
+	return &common.PageInfo{
+		Total: total,
+		Rows:  roles,
+	}, nil
 }
 
-// GetRoleByCode 根据角色编码获取角色
-func (dao *RoleDAO) GetRoleByCode(tx *gorm.DB, code string) (*model.Role, error) {
-	role := &model.Role{}
-	err := tx.Where("code = ?", code).First(role).Error
-	return role, err
+// List 获取角色列表
+func (d *RoleDAO) List() ([]model.Role, error) {
+	var roles []model.Role
+	err := global.GormDao.Order("id desc").Find(&roles).Error
+	return roles, err
 }
 
-// CheckCodeExists 检查角色编码是否已存在
-func (dao *RoleDAO) CheckCodeExists(tx *gorm.DB, code string, excludeId ...int) (bool, error) {
+// GetById 根据ID获取角色
+func (d *RoleDAO) GetById(id int) (*model.Role, error) {
+	var role model.Role
+	err := global.GormDao.First(&role, id).Error
+	return &role, err
+}
+
+// Add 添加角色
+func (d *RoleDAO) Add(role *model.Role) error {
+	return global.GormDao.Create(role).Error
+}
+
+// Update 更新角色
+func (d *RoleDAO) Update(role *model.Role) error {
+	return global.GormDao.Save(role).Error
+}
+
+// Delete 删除角色
+func (d *RoleDAO) Delete(ids []int) error {
+	return global.GormDao.Delete(&model.Role{}, ids).Error
+}
+
+// UpdateStatus 更新角色状态
+func (d *RoleDAO) UpdateStatus(id int, status string) error {
+	return global.GormDao.Model(&model.Role{}).Where("id = ?", id).Update("status", status).Error
+}
+
+// GetByCode 根据角色编码获取角色
+func (d *RoleDAO) GetByCode(code string) (*model.Role, error) {
+	var role model.Role
+	err := global.GormDao.Where("code = ?", code).First(&role).Error
+	return &role, err
+}
+
+// CheckNameExist 检查角色名称是否存在
+func (d *RoleDAO) CheckNameExist(name string, excludeId ...int) (bool, error) {
 	var count int64
-	db := tx.Model(&model.Role{}).Where("code = ?", code)
+	db := global.GormDao.Model(&model.Role{}).Where("name = ?", name)
 	if len(excludeId) > 0 {
 		db = db.Where("id != ?", excludeId[0])
 	}
@@ -36,52 +98,52 @@ func (dao *RoleDAO) CheckCodeExists(tx *gorm.DB, code string, excludeId ...int) 
 	return count > 0, err
 }
 
-// Page 获取角色分页列表
-func (dao *RoleDAO) Page(pageNum, pageSize int, query map[string]interface{}) (*common.PageInfo, error) {
-	db := global.GormDao.Model(&model.Role{})
-
-	// 添加查询条件
-	if name, ok := query["name"].(string); ok && name != "" {
-		db = db.Where("name LIKE ?", "%"+name+"%")
+// CheckCodeExist 检查角色编码是否存在
+func (d *RoleDAO) CheckCodeExist(code string, excludeId ...int) (bool, error) {
+	var count int64
+	db := global.GormDao.Model(&model.Role{}).Where("code = ?", code)
+	if len(excludeId) > 0 {
+		db = db.Where("id != ?", excludeId[0])
 	}
-	if code, ok := query["code"].(string); ok && code != "" {
-		db = db.Where("code LIKE ?", "%"+code+"%")
-	}
-
-	page := common.CreatePageInfo(pageNum, pageSize)
-	if err := db.Count(&page.Total).Error; err != nil {
-		return nil, err
-	}
-
-	page.Calculate()
-	var dataList []*model.Role
-	err := db.Order("id desc").Offset(page.Offset).Limit(page.Limit).Find(&dataList).Error
-	page.Rows = dataList
-	return page, err
+	err := db.Count(&count).Error
+	return count > 0, err
 }
 
-// Add 添加角色
-func (dao *RoleDAO) Add(tx *gorm.DB, role *model.Role) error {
-	return tx.Create(role).Error
-}
-
-// Update 更新角色
-func (dao *RoleDAO) Update(tx *gorm.DB, role *model.Role) error {
-	return tx.Model(role).Updates(map[string]interface{}{
-		"name":        role.Name,
-		"code":        role.Code,
-		"description": role.Description,
-	}).Error
-}
-
-// Delete 删除角色
-func (dao *RoleDAO) Delete(tx *gorm.DB, ids []int) error {
-	return tx.Where("id IN ?", ids).Delete(&model.Role{}).Error
-}
-
-// List 获取所有角色列表
-func (dao *RoleDAO) List(tx *gorm.DB) ([]*model.Role, error) {
+func (d *RoleDAO) GetByUserId(id int) ([]*model.Role, error) {
 	var roles []*model.Role
-	err := tx.Find(&roles).Error
+	err := global.GormDao.Model(&model.Role{}).Where("id in (select role_id from p_user_role where user_id = ?)", id).Find(&roles).Error
 	return roles, err
+}
+
+// GetRoleMenus 获取角色菜单ID列表
+func (d *RoleDAO) GetRoleMenus(roleId int) ([]int, error) {
+	var menuIds []int
+	err := global.GormDao.Table("role_menu").
+		Select("menu_id").
+		Where("role_id = ?", roleId).
+		Pluck("menu_id", &menuIds).Error
+	return menuIds, err
+}
+
+// AuthRole 角色授权
+func (d *RoleDAO) AuthRole(roleId int, menuIds []int) error {
+	return global.GormDao.Transaction(func(tx *gorm.DB) error {
+		// 删除原有权限
+		if err := tx.Table("role_menu").Where("role_id = ?", roleId).Delete(nil).Error; err != nil {
+			return err
+		}
+
+		// 添加新权限
+		if len(menuIds) > 0 {
+			var roleMenus []map[string]interface{}
+			for _, menuId := range menuIds {
+				roleMenus = append(roleMenus, map[string]interface{}{
+					"role_id": roleId,
+					"menu_id": menuId,
+				})
+			}
+			return tx.Table("role_menu").Create(roleMenus).Error
+		}
+		return nil
+	})
 }

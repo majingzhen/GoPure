@@ -12,7 +12,7 @@ type LoginUserVO struct {
 	Email    string        `json:"email"`
 	Mobile   string        `json:"mobile"`
 	Roles    []*model.Role `json:"roles"`
-	Menus    []*model.Menu `json:"menus"`
+	Menus    []*MenuVO     `json:"menus"`
 }
 
 // UserReqPageVO 用户分页请求

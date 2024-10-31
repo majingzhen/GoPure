@@ -2,27 +2,32 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>角色管理</title>
+    <title>菜单管理</title>
     <link rel="stylesheet" href="/static/layui/css/layui.css">
     <script src="/static/jquery/jquery-3.7.1.min.js"></script>
     <script src="/static/layui/layui.js"></script>
+    <script src="/static/dtree/dtree.js"></script>
     <script src="/static/js/request.js"></script>
-    <script src="/static/js/role/index.js"></script>
+    <script src="/static/js/menu/index.js"></script>
 </head>
 <body>
     <!-- 搜索栏 -->
     <div class="layui-form layui-form-pane" style="margin: 15px;">
         <div class="layui-form-item">
             <div class="layui-inline">
-                <label class="layui-form-label">角色名称</label>
+                <label class="layui-form-label">菜单名称</label>
                 <div class="layui-input-inline">
                     <input type="text" name="name" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-inline">
-                <label class="layui-form-label">角色编码</label>
+                <label class="layui-form-label">状态</label>
                 <div class="layui-input-inline">
-                    <input type="text" name="code" autocomplete="off" class="layui-input">
+                    <select name="status">
+                        <option value="">全部</option>
+                        <option value="0">正常</option>
+                        <option value="1">停用</option>
+                    </select>
                 </div>
             </div>
             <div class="layui-inline">
@@ -49,16 +54,13 @@
     </script>
 
     <!-- 数据表格 -->
-    <table id="roleTable" lay-filter="roleTable"></table>
+    <table id="menuTable" lay-filter="menuTable"></table>
 
     <!-- 行工具栏 -->
     <script type="text/html" id="rowToolbarTpl">
         <div class="layui-btn-container">
             <button class="layui-btn layui-btn-sm" lay-event="edit">
                 <i class="layui-icon layui-icon-edit"></i>
-            </button>
-            <button class="layui-btn layui-btn-warm layui-btn-sm" lay-event="auth">
-                <i class="layui-icon layui-icon-auz"></i>
             </button>
             <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">
                 <i class="layui-icon layui-icon-delete"></i>

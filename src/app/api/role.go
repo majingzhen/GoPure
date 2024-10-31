@@ -13,37 +13,29 @@ var Role = new(RoleAPI)
 
 type RoleAPI struct{}
 
-// JumpRoleView 跳转角色管理页面
-func (api *RoleAPI) JumpRoleView(c *gin.Context) {
-	response.JumpView(c, "role/index.html")
-}
-
-// JumpRoleFormView 跳转角色表单页面
-func (api *RoleAPI) JumpRoleFormView(c *gin.Context) {
-	response.JumpView(c, "role/form.html")
-}
-
-// JumpRoleAuthView 跳转角色权限分配页面
-func (api *RoleAPI) JumpRoleAuthView(c *gin.Context) {
-	response.JumpView(c, "role/auth.html")
-}
-
-// Page 获取角色列表
+// Page 获取角色分页
 func (api *RoleAPI) Page(c *gin.Context) {
 	var req view.RoleReqPageVO
 	if err := c.ShouldBind(&req); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	page, err := service.Role.Page(req.PageNum, req.PageSize, map[string]interface{}{
-		"name": req.Name,
-		"code": req.Code,
-	})
+	page, err := service.Role.Page(req)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
 	response.OkWithData(page, c)
+}
+
+// List 获取角色列表
+func (api *RoleAPI) List(c *gin.Context) {
+	roles, err := service.Role.List()
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	response.OkWithData(roles, c)
 }
 
 // Get 获取角色详情
@@ -53,23 +45,12 @@ func (api *RoleAPI) Get(c *gin.Context) {
 		response.FailWithMessage("参数错误", c)
 		return
 	}
-	role, err := service.Role.GetRoleById(id)
+	role, err := service.Role.GetById(id)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	// 获取角色菜单
-	menuIds, err := service.Menu.GetMenuIdsByRoleId(id)
-	if err != nil {
-		response.FailWithMessage(err.Error(), c)
-		return
-	}
-	// 构建返回数据
-	roleVO := &view.RoleVO{
-		Role:    role,
-		MenuIds: menuIds,
-	}
-	response.OkWithData(roleVO, c)
+	response.OkWithData(role, c)
 }
 
 // Add 添加角色
@@ -86,7 +67,7 @@ func (api *RoleAPI) Add(c *gin.Context) {
 		Description: req.Description,
 	}
 	// 保存角色
-	err := service.Role.Add(role, req.MenuIds)
+	err := service.Role.Add(role)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -102,7 +83,7 @@ func (api *RoleAPI) Update(c *gin.Context) {
 		return
 	}
 	// 获取原角色信息
-	role, err := service.Role.GetRoleById(req.Id)
+	role, err := service.Role.GetById(req.Id)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -111,8 +92,9 @@ func (api *RoleAPI) Update(c *gin.Context) {
 	role.Name = req.Name
 	role.Code = req.Code
 	role.Description = req.Description
+
 	// 更新角色
-	err = service.Role.Update(role, req.MenuIds)
+	err = service.Role.Update(role)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -135,42 +117,52 @@ func (api *RoleAPI) Delete(c *gin.Context) {
 	response.Ok(c)
 }
 
-// GetMenuTree 获取角色菜单树
-func (api *RoleAPI) GetMenuTree(c *gin.Context) {
-	menuType := utils.GetIntParam(c, "menuType")
-	menus, err := service.Menu.GetMenuTree(menuType)
+// JumpRoleView 跳转角色管理页面
+func (api *RoleAPI) JumpRoleView(c *gin.Context) {
+	response.JumpView(c, "role/index.html")
+}
+
+// JumpRoleAddView 跳转角色添加页面
+func (api *RoleAPI) JumpRoleAddView(c *gin.Context) {
+	response.JumpView(c, "role/add.html")
+}
+
+// JumpRoleEditView 跳转角色更新页面
+func (api *RoleAPI) JumpRoleEditView(c *gin.Context) {
+	response.JumpView(c, "role/edit.html")
+}
+
+// JumpRoleAuthView 跳转角色授权页面
+func (api *RoleAPI) JumpRoleAuthView(c *gin.Context) {
+	response.JumpView(c, "role/auth.html")
+}
+
+// GetRoleMenus 获取角色菜单
+func (api *RoleAPI) GetRoleMenus(c *gin.Context) {
+	id := utils.GetIntParam(c, "id")
+	if id == 0 {
+		response.FailWithMessage("参数错误", c)
+		return
+	}
+	menuIds, err := service.Role.GetRoleMenus(id)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	response.OkWithData(menus, c)
+	response.OkWithData(menuIds, c)
 }
 
-// SaveMenus 保存角色菜单权限
-func (api *RoleAPI) SaveMenus(c *gin.Context) {
-	var req struct {
-		Id      int      `json:"id" binding:"required"`
-		MenuIds []string `json:"menuIds"`
-	}
+// AuthRole 角色授权
+func (api *RoleAPI) AuthRole(c *gin.Context) {
+	var req view.RoleAuthReqVO
 	if err := c.ShouldBind(&req); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-
-	err := service.Role.SaveMenus(req.Id, req.MenuIds)
+	err := service.Role.AuthRole(req.Id, req.MenuIds)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
 	response.Ok(c)
-}
-
-// List 获取所有角色列表
-func (api *RoleAPI) List(c *gin.Context) {
-	roles, err := service.Role.List()
-	if err != nil {
-		response.FailWithMessage(err.Error(), c)
-		return
-	}
-	response.OkWithData(roles, c)
 }

@@ -12,6 +12,8 @@ func InitRouter(r *gin.Engine) {
 	User.InitUserRouter(r)
 	// 初始化角色路由
 	Role.InitRoleRouter(r)
+	// 初始化菜单路由
+	Menu.InitMenuRouter(r)
 	// 初始化字典路由
 	Dict.InitDictRouter(r)
 }

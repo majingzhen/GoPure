@@ -2,161 +2,134 @@ package service
 
 import (
 	"errors"
-	"gorm.io/gorm"
+	"matuto.com/GoPure/src/app/api/view"
 	"matuto.com/GoPure/src/app/dao"
 	"matuto.com/GoPure/src/app/model"
 	"matuto.com/GoPure/src/common"
-	"matuto.com/GoPure/src/global"
 )
 
 var Role = new(RoleService)
 
 type RoleService struct{}
 
-// GetRoleById 根据id获取角色
-func (service *RoleService) GetRoleById(id int) (*model.Role, error) {
-	return dao.Role.GetRoleById(global.GormDao, id)
+// Page 获取角色分页
+func (s *RoleService) Page(req view.RoleReqPageVO) (*common.PageInfo, error) {
+	return dao.Role.Page(req)
 }
 
-// GetRoleByCode 根据角色编码获取角色
-func (service *RoleService) GetRoleByCode(code string) (*model.Role, error) {
-	return dao.Role.GetRoleByCode(global.GormDao, code)
+// List 获取角色列表
+func (s *RoleService) List() ([]model.Role, error) {
+	return dao.Role.List()
 }
 
-// Page 获取角色分页列表
-func (service *RoleService) Page(pageNum, pageSize int, query map[string]interface{}) (*common.PageInfo, error) {
-	return dao.Role.Page(pageNum, pageSize, query)
-}
-
-// GetByUserId 根据用户ID获取角色列表
-func (service *RoleService) GetByUserId(id int) ([]*model.Role, error) {
-	return dao.UserRole.GetRolesByUserId(global.GormDao, id)
+// GetById 根据ID获取角色
+func (s *RoleService) GetById(id int) (*model.Role, error) {
+	return dao.Role.GetById(id)
 }
 
 // Add 添加角色
-func (service *RoleService) Add(role *model.Role, menuIds []string) error {
-	return global.GormDao.Transaction(func(tx *gorm.DB) error {
-		// 1. 检查角色编码是否已存在
-		exists, err := dao.Role.CheckCodeExists(tx, role.Code)
-		if err != nil {
-			return err
-		}
-		if exists {
-			return errors.New("角色编码已存在")
-		}
+func (s *RoleService) Add(role *model.Role) error {
+	// 检查角色名称是否存在
+	exist, err := dao.Role.CheckNameExist(role.Name)
+	if err != nil {
+		return err
+	}
+	if exist {
+		return errors.New("角色名称已存在")
+	}
 
-		// 2. 保存角色信息
-		if err := dao.Role.Add(tx, role); err != nil {
-			return err
-		}
+	// 检查角色编码是否存在
+	exist, err = dao.Role.CheckCodeExist(role.Code)
+	if err != nil {
+		return err
+	}
+	if exist {
+		return errors.New("角色编码已存在")
+	}
 
-		// 3. 保存角色菜单关联
-		if len(menuIds) > 0 {
-			roleMenus := make([]*model.RoleMenu, len(menuIds))
-			for i, menuId := range menuIds {
-				roleMenus[i] = &model.RoleMenu{
-					RoleId: role.Id,
-					MenuId: menuId,
-				}
-			}
-			if err := tx.Create(&roleMenus).Error; err != nil {
-				return err
-			}
-		}
-
-		return nil
-	})
+	// 添加角色
+	return dao.Role.Add(role)
 }
 
 // Update 更新角色
-func (service *RoleService) Update(role *model.Role, menuIds []string) error {
-	return global.GormDao.Transaction(func(tx *gorm.DB) error {
-		// 1. 检查角色编码是否已存在（排除自身）
-		exists, err := dao.Role.CheckCodeExists(tx, role.Code, role.Id)
-		if err != nil {
-			return err
-		}
-		if exists {
-			return errors.New("角色编码已存在")
-		}
+func (s *RoleService) Update(role *model.Role) error {
+	// 检查角色名称是否存在
+	exist, err := dao.Role.CheckNameExist(role.Name, role.Id)
+	if err != nil {
+		return err
+	}
+	if exist {
+		return errors.New("角色名称已存在")
+	}
 
-		// 2. 更新角色信息
-		if err := dao.Role.Update(tx, role); err != nil {
-			return err
-		}
+	// 检查角色编码是否存在
+	exist, err = dao.Role.CheckCodeExist(role.Code, role.Id)
+	if err != nil {
+		return err
+	}
+	if exist {
+		return errors.New("角色编码已存在")
+	}
 
-		// 3. 更新角色菜单关联
-		// 先删除原有关联
-		if err := tx.Where("role_id = ?", role.Id).Delete(&model.RoleMenu{}).Error; err != nil {
-			return err
-		}
-		// 添加新关联
-		if len(menuIds) > 0 {
-			roleMenus := make([]*model.RoleMenu, len(menuIds))
-			for i, menuId := range menuIds {
-				roleMenus[i] = &model.RoleMenu{
-					RoleId: role.Id,
-					MenuId: menuId,
-				}
-			}
-			if err := tx.Create(&roleMenus).Error; err != nil {
-				return err
-			}
-		}
+	// 不允许修改管理员角色
+	oldRole, err := dao.Role.GetById(role.Id)
+	if err != nil {
+		return err
+	}
+	if oldRole.Code == model.RoleAdmin {
+		return errors.New("不允许修改管理员角色")
+	}
 
-		return nil
-	})
+	// 更新角色
+	return dao.Role.Update(role)
 }
 
 // Delete 删除角色
-func (service *RoleService) Delete(ids []int) error {
-	return global.GormDao.Transaction(func(tx *gorm.DB) error {
-		// 1. 删除角色菜单关联
-		if err := tx.Where("role_id IN ?", ids).Delete(&model.RoleMenu{}).Error; err != nil {
+func (s *RoleService) Delete(ids []int) error {
+	// 检查是否包含管理员角色
+	for _, id := range ids {
+		role, err := dao.Role.GetById(id)
+		if err != nil {
 			return err
 		}
-
-		// 2. 删除用户角色关联
-		if err := tx.Where("role_id IN ?", ids).Delete(&model.UserRole{}).Error; err != nil {
-			return err
+		if role.Code == model.RoleAdmin {
+			return errors.New("不允许删除管理员角色")
 		}
+	}
 
-		// 3. 删除角色
-		if err := dao.Role.Delete(tx, ids); err != nil {
-			return err
-		}
-
-		return nil
-	})
+	// 删除角色
+	return dao.Role.Delete(ids)
 }
 
-// List 获取所有角色列表
-func (service *RoleService) List() ([]*model.Role, error) {
-	return dao.Role.List(global.GormDao)
+// UpdateStatus 更新角色状态
+func (s *RoleService) UpdateStatus(id int, status string) error {
+	// 不允许禁用管理员角色
+	role, err := dao.Role.GetById(id)
+	if err != nil {
+		return err
+	}
+	if role.Code == model.RoleAdmin && status == "1" {
+		return errors.New("不允许禁用管理员角色")
+	}
+
+	return dao.Role.UpdateStatus(id, status)
 }
 
-// SaveMenus 保存角色菜单权限
-func (service *RoleService) SaveMenus(roleId int, menuIds []string) error {
-	return global.GormDao.Transaction(func(tx *gorm.DB) error {
-		// 先删除原有关联
-		if err := tx.Where("role_id = ?", roleId).Delete(&model.RoleMenu{}).Error; err != nil {
-			return err
-		}
+// GetByCode 根据角色编码获取角色
+func (s *RoleService) GetByCode(code string) (*model.Role, error) {
+	return dao.Role.GetByCode(code)
+}
 
-		// 批量插入新关联
-		if len(menuIds) > 0 {
-			roleMenus := make([]*model.RoleMenu, len(menuIds))
-			for i, menuId := range menuIds {
-				roleMenus[i] = &model.RoleMenu{
-					RoleId: roleId,
-					MenuId: menuId,
-				}
-			}
-			if err := tx.Create(&roleMenus).Error; err != nil {
-				return err
-			}
-		}
+func (s *RoleService) GetByUserId(id int) ([]*model.Role, error) {
+	return dao.Role.GetByUserId(id)
+}
 
-		return nil
-	})
+// GetRoleMenus 获取角色菜单ID列表
+func (s *RoleService) GetRoleMenus(roleId int) ([]int, error) {
+	return dao.Role.GetRoleMenus(roleId)
+}
+
+// AuthRole 角色授权
+func (s *RoleService) AuthRole(roleId int, menuIds []int) error {
+	return dao.Role.AuthRole(roleId, menuIds)
 }

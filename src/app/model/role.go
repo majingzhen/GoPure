@@ -1,19 +1,15 @@
 package model
 
-import (
-	"time"
-)
+import "time"
 
 // Role 角色模型
 type Role struct {
-	Id           int        `json:"id" gorm:"primary_key"`
-	Name         string     `json:"name" gorm:"column:name;size:32;not null;comment:角色名"`
-	Description  string     `json:"description" gorm:"column:description;size:256;comment:角色描述"`
-	Code         string     `json:"code" gorm:"column:code;size:32;not null;comment:角色码"`
-	CreateTime   time.Time  `json:"createTime" gorm:"column:create_time"`
-	UpdateTime   *time.Time `json:"updateTime" gorm:"column:update_time"`
-	CreateUserID *int       `json:"createUserId,omitempty" gorm:"column:create_user_id"`
-	UpdateUserID *int       `json:"updateUserId,omitempty" gorm:"column:update_user_id"`
+	Id          int       `json:"id" gorm:"primary_key"`
+	Name        string    `json:"name" gorm:"not null"`
+	Code        string    `json:"code" gorm:"not null;unique"`
+	Description string    `json:"description"`
+	CreateTime  time.Time `json:"createTime" gorm:"autoCreateTime"`
+	UpdateTime  time.Time `json:"updateTime" gorm:"autoUpdateTime"`
 }
 
 // TableName 指定表名

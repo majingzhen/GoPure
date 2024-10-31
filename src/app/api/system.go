@@ -66,7 +66,7 @@ func (api *SystemAPI) Login(c *gin.Context) {
 		return
 	}
 	// 查询菜单
-	menus, err := service.Menu.GetByUserId(byUserName.Id, model.MenuPositionBackend)
+	menus, err := service.Menu.GetByUserId(byUserName.Id, model.MENU_POSITION_BACKEND)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
