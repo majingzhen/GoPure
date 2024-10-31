@@ -1,9 +1,6 @@
-layui.extend({
-    dtree: '/static/dtree/dtree'
-}).use(['form', 'layer', 'dtree'], function(){
+layui.use(['form', 'layer'], function(){
     var form = layui.form;
     var layer = layui.layer;
-    var dtree = layui.dtree;
     var menuId = getUrlParam('id');
     
     // 初始化表单
@@ -57,41 +54,6 @@ layui.extend({
         } else {
             $('#routeInfo').show();
         }
-        
-        // 初始化上级菜单树
-        dtree.render({
-            elem: "#parentTree",
-            url: "/menu/tree",
-            method: 'get',
-            initLevel: 1,
-            type: "all",
-            dataStyle: "layuiStyle",
-            response: {
-                statusName: "code",
-                statusCode: 0,
-                message: "msg",
-                rootName: "data",
-                treeId: "id",
-                parentId: "pid",
-                title: "name"
-            },
-            done: function(){
-                // 设置选中节点
-                if(menuRes.data.pid !== '-1') {
-                    dtree.dataInit("parentTree", menuRes.data.pid);
-                    // 设置父菜单名称
-                    var node = dtree.getParam("parentTree", menuRes.data.pid);
-                    if(node) {
-                        $('input[name="parentName"]').val(node.context);
-                    }
-                }
-                // 绑定节点点击事件
-                dtree.on("node('parentTree')", function(obj){
-                    $('input[name="pid"]').val(obj.param.nodeId);
-                    $('input[name="parentName"]').val(obj.param.context);
-                });
-            }
-        });
     }
     
     // 获取URL参数

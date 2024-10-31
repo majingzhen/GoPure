@@ -19,11 +19,7 @@ func (api *MenuAPI) List(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	menus, err := service.Menu.List(req)
-	if err != nil {
-		response.FailWithMessage(err.Error(), c)
-		return
-	}
+	menus := service.Menu.List(req)
 	response.OkWithData(menus, c)
 }
 
@@ -113,6 +109,21 @@ func (api *MenuAPI) Delete(c *gin.Context) {
 		return
 	}
 	err := service.Menu.Delete(req.Id)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	response.Ok(c)
+}
+
+// UpdateStatus 更新菜单状态
+func (api *MenuAPI) UpdateStatus(c *gin.Context) {
+	var req view.MenuStatusReqVO
+	if err := c.ShouldBind(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	err := service.Menu.UpdateStatus(req.Id, req.Status)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return

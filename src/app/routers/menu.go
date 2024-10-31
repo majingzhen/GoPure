@@ -19,11 +19,11 @@ func (r *MenuRouter) InitMenuRouter(e *gin.Engine) {
 		menuRouter.GET("/add", api.Menu.JumpMenuAddView)
 		menuRouter.GET("/edit", api.Menu.JumpMenuEditView)
 
-		// 数据接口
 		menuRouter.GET("/list", api.Menu.List)
 		menuRouter.GET("/get/:id", api.Menu.Get)
 		menuRouter.POST("/add", api.Menu.Add)
 		menuRouter.POST("/update", api.Menu.Update)
 		menuRouter.POST("/delete", api.Menu.Delete)
+		menuRouter.POST("/updateStatus", api.Menu.UpdateStatus)
 	}
 }

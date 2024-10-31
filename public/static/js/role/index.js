@@ -1,3 +1,18 @@
+// 表格工具栏模板
+const toolbarTpl = `
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="edit">
+            <i class="layui-icon layui-icon-edit"></i>
+        </button>
+        <button class="layui-btn layui-btn-warm layui-btn-sm" lay-event="resetPwd">
+            <i class="layui-icon layui-icon-key"></i>
+        </button>
+        <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">
+            <i class="layui-icon layui-icon-delete"></i>
+        </button>
+    </div>
+`;
+
 layui.use(['table', 'form', 'layer'], function(){
     var table = layui.table;
     var form = layui.form;
@@ -17,7 +32,7 @@ layui.use(['table', 'form', 'layer'], function(){
             {field: 'code', title: '角色编码'},
             {field: 'description', title: '描述'},
             {field: 'createTime', title: '创建时间', sort: true},
-            {title: '操作', toolbar: '#rowToolbarTpl', width: 120}
+            {title: '操作', toolbar: toolbarTpl}
         ]],
         page: true,
         request: {

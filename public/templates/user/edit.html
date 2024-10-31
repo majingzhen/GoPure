@@ -2,22 +2,23 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>新增用户</title>
-    <link rel="stylesheet" href="/static/layui/css/layui.css">
-    <script src="/static/jquery/jquery-3.7.1.min.js"></script>
-    <script src="/static/xm-select/xm-select.js"></script>
-    <script src="/static/layui/layui.js"></script>
+    <title>编辑用户</title>
+    <link rel="stylesheet" href="/static/module/layui/css/layui.css">
+    <script src="/static/module/jquery/jquery-3.7.1.min.js"></script>
+    <script src="/static/module/xm-select/xm-select.js"></script>
+    <script src="/static/module/layui/layui.js"></script>
     <script src="/static/js/request.js"></script>
     <script src="/static/js/convert.js"></script>
-    <script src="/static/js/user/add.js"></script>
+    <script src="/static/js/user/edit.js"></script>
 </head>
 <body style="padding: 20px;">
-    <form class="layui-form" lay-filter="userAddForm">
+    <form class="layui-form" lay-filter="userEditForm">
+        <input type="hidden" name="id">
+        
         <div class="layui-form-item">
             <label class="layui-form-label">账号</label>
             <div class="layui-input-block">
-                <input type="text" name="account" required lay-verify="required" 
-                       placeholder="请输入账号" autocomplete="off" class="layui-input">
+                <input type="text" name="account" class="layui-input" readonly>
             </div>
         </div>
         
@@ -26,22 +27,6 @@
             <div class="layui-input-block">
                 <input type="text" name="userName" required lay-verify="required" 
                        placeholder="请输入用户名" autocomplete="off" class="layui-input">
-            </div>
-        </div>
-        
-        <div class="layui-form-item">
-            <label class="layui-form-label">密码</label>
-            <div class="layui-input-block">
-                <input type="password" name="password" required lay-verify="required" 
-                       placeholder="请输入密码" autocomplete="off" class="layui-input">
-            </div>
-        </div>
-        
-        <div class="layui-form-item">
-            <label class="layui-form-label">确认密码</label>
-            <div class="layui-input-block">
-                <input type="password" name="confirmPassword" required lay-verify="required|confirmPwd" 
-                       placeholder="请再次输入密码" autocomplete="off" class="layui-input">
             </div>
         </div>
         
@@ -71,7 +56,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label">状态</label>
             <div class="layui-input-block">
-                <input type="radio" name="status" value="0" title="正常" checked>
+                <input type="radio" name="status" value="0" title="正常">
                 <input type="radio" name="status" value="1" title="禁用">
             </div>
         </div>
@@ -79,7 +64,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label">角色</label>
             <div class="layui-input-block">
-                <div id="addRoleSelect"></div>
+                <div id="editRoleSelect"></div>
             </div>
         </div>
         
@@ -92,7 +77,7 @@
         
         <div class="layui-form-item">
             <div class="layui-input-block">
-                <button class="layui-btn" lay-submit lay-filter="userAddForm">保存</button>
+                <button class="layui-btn" lay-submit lay-filter="userEditForm">保存</button>
                 <button type="reset" class="layui-btn layui-btn-primary">重置</button>
             </div>
         </div>

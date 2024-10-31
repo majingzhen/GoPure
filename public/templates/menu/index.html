@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>菜单管理</title>
+    <link rel="stylesheet" href="/static/module/layui/css/layui.css">
+</head>
+<body>
+    <div class="layui-btn-container" style="margin: 15px">
+        <button class="layui-btn layui-btn-normal" lay-event="add" id="addBtn">
+            <i class="layui-icon layui-icon-add-1"></i> 新增
+        </button>
+    </div>
+
+    <!-- 数据表格 -->
+    <table id="menuTable" lay-filter="menuTable"></table>
+
+    
+
+    <script src="/static/module/jquery/jquery-3.7.1.min.js"></script>
+    <script src="/static/module/layui/layui.js"></script>
+    <script src="/static/js/request.js"></script>
+    <script src="/static/js/common.js"></script>
+    <script src="/static/js/menu/index.js"></script>
+</body>
+</html> 

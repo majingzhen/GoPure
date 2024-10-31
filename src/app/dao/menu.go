@@ -67,7 +67,7 @@ func (d *MenuDAO) GetByRoleId(roleId int) ([]model.Menu, error) {
 	var menus []model.Menu
 	err := global.GormDao.Model(&model.Menu{}).
 		Where("id in (select menu_id from p_role_menu where role_id = ?)", roleId).
-		Order("seq").
+		Order("seq asc").
 		Find(&menus).Error
 	return menus, err
 }
@@ -77,7 +77,11 @@ func (d *MenuDAO) GetByRoleIds(roleIds []int) ([]model.Menu, error) {
 	var menus []model.Menu
 	err := global.GormDao.Model(&model.Menu{}).
 		Where("id in (select menu_id from p_role_menu where role_id in ?)", roleIds).
-		Order("seq").
+		Order("seq asc").
 		Find(&menus).Error
 	return menus, err
+}
+
+func (d *MenuDAO) UpdateStatus(id string, status string) error {
+	return global.GormDao.Model(&model.Menu{}).Where("id = ?", id).Update("status", status).Error
 }

@@ -13,8 +13,13 @@ var Menu = new(MenuService)
 type MenuService struct{}
 
 // List 获取菜单列表
-func (s *MenuService) List(req view.MenuListReqVO) ([]model.Menu, error) {
-	return dao.Menu.List(req)
+func (s *MenuService) List(req view.MenuListReqVO) []*view.MenuVO {
+	list, err := dao.Menu.List(req)
+	if err != nil {
+		return nil
+	}
+	return s.BuildTree(list)
+
 }
 
 // GetById 根据ID获取菜单
@@ -84,18 +89,21 @@ func (s *MenuService) BuildTree(menus []model.Menu) []*view.MenuVO {
 
 	// 构建树形结构
 	tree := make([]*view.MenuVO, 0)
-	for _, menuVO := range menuMap {
-		if menuVO.Pid == "-1" {
-			// 根节点
-			tree = append(tree, menuVO)
-		} else {
-			// 子节点
-			if parent, ok := menuMap[menuVO.Pid]; ok {
-				parent.Children = append(parent.Children, menuVO)
-			}
+	// 先找出所有根节点,按原始顺序添加
+	for _, m := range menus {
+		if m.Pid == "-1" {
+			tree = append(tree, menuMap[m.Id])
 		}
 	}
 
+	// 按原始顺序添加子节点
+	for _, m := range menus {
+		if m.Pid != "-1" {
+			if parent, ok := menuMap[m.Pid]; ok {
+				parent.Children = append(parent.Children, menuMap[m.Id])
+			}
+		}
+	}
 	return tree
 }
 
@@ -144,4 +152,9 @@ func (s *MenuService) GetByUserId(userId int, backend string) ([]*view.MenuVO, e
 	}
 	// 构建菜单树
 	return s.BuildTree(menus), nil
+}
+
+// UpdateStatus 更新菜单状态
+func (s *MenuService) UpdateStatus(id string, status string) error {
+	return dao.Menu.UpdateStatus(id, status)
 }

@@ -24,7 +24,7 @@ type MenuAddReqVO struct {
 	Name         string `json:"name" binding:"required"` // 菜单名称
 	Url          string `json:"url"`                     // 菜单链接
 	Icon         string `json:"icon"`                    // 菜单图标
-	Seq          int    `json:"seq"`                     // 排序序号
+	Seq          int    `json:"seq,string"`              // 排序序号
 	Target       string `json:"target"`                  // 菜单打开方式
 	Status       string `json:"status"`                  // 菜单状态
 	MenuType     string `json:"menuType"`                // 菜单类型
@@ -39,7 +39,7 @@ type MenuUpdateReqVO struct {
 	Name         string `json:"name" binding:"required"` // 菜单名称
 	Url          string `json:"url"`                     // 菜单链接
 	Icon         string `json:"icon"`                    // 菜单图标
-	Seq          int    `json:"seq"`                     // 排序序号
+	Seq          int    `json:"seq,string"`              // 排序序号
 	Target       string `json:"target"`                  // 菜单打开方式
 	Status       string `json:"status"`                  // 菜单状态
 	MenuType     string `json:"menuType"`                // 菜单类型
@@ -50,4 +50,10 @@ type MenuUpdateReqVO struct {
 // MenuDeleteReqVO 删除菜单请求
 type MenuDeleteReqVO struct {
 	Id string `json:"id" binding:"required"`
+}
+
+// MenuStatusReqVO 更新菜单状态请求
+type MenuStatusReqVO struct {
+	Id     string `json:"id" binding:"required"`
+	Status string `json:"status" binding:"required"`
 }

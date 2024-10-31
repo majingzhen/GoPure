@@ -1,3 +1,4 @@
+
 var element;
 // 使用新的layui模块加载方式
 layui.config({

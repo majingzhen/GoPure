@@ -21,8 +21,8 @@ type Router struct{}
 func (r *Router) InitRouter() *gin.Engine {
 	e := gin.New()
 	// 前端文件
-	e.HTMLRender = LoadTemplateFiles("ui/templates", ".html")
-	e.Static("/static", "./ui/static")
+	e.HTMLRender = LoadTemplateFiles("public/templates", ".html")
+	e.Static("/static", "./public/static")
 
 	// 使用中间件
 	e.Use(middleware.GinLogger())
