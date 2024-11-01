@@ -18,3 +18,19 @@ func (dao *UserRoleDAO) GetRolesByUserId(tx *gorm.DB, userId int) ([]*model.Role
 		Find(&roles).Error
 	return roles, err
 }
+
+func (dao *UserRoleDAO) DeleteByUserIds(tx *gorm.DB, ids []int) error {
+	return tx.Where("user_id in ?", ids).Delete(&model.UserRole{}).Error
+}
+
+func (dao *UserRoleDAO) DeleteByRoleIds(tx *gorm.DB, ids []int) error {
+	return tx.Where("role_id in ?", ids).Delete(&model.UserRole{}).Error
+}
+
+func (dao *UserRoleDAO) Create(tx *gorm.DB, roles []*model.UserRole) error {
+	return tx.Create(&roles).Error
+}
+
+func (dao *UserRoleDAO) DeleteByUserId(tx *gorm.DB, id int) error {
+	return tx.Where("user_id = ?", id).Delete(&model.UserRole{}).Error
+}

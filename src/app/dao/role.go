@@ -71,8 +71,8 @@ func (d *RoleDAO) Update(role *model.Role) error {
 }
 
 // Delete 删除角色
-func (d *RoleDAO) Delete(ids []int) error {
-	return global.GormDao.Delete(&model.Role{}, ids).Error
+func (d *RoleDAO) Delete(tx *gorm.DB, ids []int) error {
+	return tx.Delete(&model.Role{}, ids).Error
 }
 
 // UpdateStatus 更新角色状态

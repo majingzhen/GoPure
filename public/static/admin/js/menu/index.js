@@ -100,8 +100,8 @@ function queryTable() {
                 templet: function (d) {
                     let html = "<div>"
                     html += "<a class='pear-btn pear-btn-xs pear-btn-primary' onclick='add(\"" + d.id + "\")'>添加子菜单</a> " +
-                        "<a class='pear-btn pear-btn-xs pear-btn-primary' onclick='editData(\"" + d.id + "\")'>编辑</a> " +
-                        "<a class='pear-btn pear-btn-xs pear-btn-danger' onclick='deleteData(\"" + d.id + "\")'>删除</a>" +
+                        "<a class='pear-btn pear-btn-xs pear-btn-primary' onclick='openMenuEditForm(\"" + d.id + "\")'>编辑</a> " +
+                        "<a class='pear-btn pear-btn-xs pear-btn-danger' onclick='deleteMenus(\"" + d.id + "\")'>删除</a>" +
                         "</div>";
                     return html;
                 }
@@ -143,21 +143,20 @@ function openMenuEditForm(id) {
     layer.open({
         type: 2,
         title: '编辑菜单',
-        area: ['600px', '80%'],
-        content: '/menu/edit?id=' + id,
-        maxmin: true,
-        end: function(){
-            layui.tableTree.reload('menuTable');
-        }
+        type: 2,
+        area: common.layerArea($("html")[0].clientWidth, 500, 400),
+        shadeClose: true,
+        anim: 1,
+        content: '/menu/edit?pid=' + pid
     });
 }
 
 // 删除菜单
-function deleteMenus(ids) {
-    request.post('/menu/delete', {ids: ids})
+function deleteMenus(id) {
+    request.post('/menu/delete', {id: id})
         .then(() => {
             layer.msg('删除成功');
-            layui.tableTree.reload('menuTable');
+            queryTable();
         });
 }
 

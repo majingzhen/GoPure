@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"gorm.io/gorm"
 	"matuto.com/GoPure/src/app/api/view"
 	"matuto.com/GoPure/src/app/model"
 	"matuto.com/GoPure/src/global"
@@ -51,8 +52,8 @@ func (d *MenuDAO) Update(menu *model.Menu) error {
 }
 
 // Delete 删除菜单
-func (d *MenuDAO) Delete(id string) error {
-	return global.GormDao.Delete(&model.Menu{}, "id = ?", id).Error
+func (d *MenuDAO) Delete(tx *gorm.DB, id string) error {
+	return tx.Delete(&model.Menu{}, "id = ?", id).Error
 }
 
 // HasChildren 检查是否有子菜单

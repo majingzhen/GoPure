@@ -15,7 +15,7 @@ type RoleReqPageVO struct {
 // RoleVO 角色详情响应
 type RoleVO struct {
 	*model.Role
-	MenuIds []int `json:"menuIds"` // 菜单ID列表
+	MenuIds []string `json:"menuIds"` // 菜单ID列表
 }
 
 // RoleAddReqVO 添加角色请求

@@ -14,7 +14,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			// 重定向到登录页
 			// 检查是否是 AJAX 请求
 			if c.GetHeader("X-Requested-With") == "XMLHttpRequest" {
-				c.JSON(401, gin.H{
+				c.JSON(http.StatusUnauthorized, gin.H{
 					"code":     401,
 					"message":  "未登录",
 					"redirect": "/login",
@@ -25,6 +25,8 @@ func AuthMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		c.Set("user", user)
+		c.Set("userId", session.Get("userId"))
 		c.Next()
 	}
 }

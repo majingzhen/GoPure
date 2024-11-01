@@ -84,6 +84,7 @@ func (api *SystemAPI) Login(c *gin.Context) {
 	// 记录登录状态
 	session := sessions.Default(c)
 	session.Set("user", loginUserVO)
+	session.Set("userId", byUserName.Id)
 	if err = session.Save(); err != nil {
 		global.Logger.Error("登录失败")
 		response.FailWithMessage("登录失败", c)

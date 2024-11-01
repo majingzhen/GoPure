@@ -86,3 +86,14 @@ func JumpView(c *gin.Context, view string) {
 func JumpViewWithData(c *gin.Context, view string, data interface{}) {
 	c.HTML(http.StatusOK, view, data)
 }
+
+// Unauthorized 未登录
+func Unauthorized(c *gin.Context) {
+	c.JSON(http.StatusUnauthorized, gin.H{
+		"code":     401,
+		"message":  "未登录",
+		"redirect": "/login",
+	})
+	c.Abort()
+	return
+}

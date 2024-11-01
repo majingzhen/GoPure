@@ -53,10 +53,39 @@ func (dao *UserDAO) Page(req view.UserReqPageVO) (page *common.PageInfo, err err
 }
 
 // CheckAccountExists 检查账号是否已存在
-func (dao *UserDAO) CheckAccountExists(tx *gorm.DB, account string) (bool, error) {
+func (dao *UserDAO) CheckAccountExists(account string) (bool, error) {
 	var count int64
-	err := tx.Model(&model.User{}).
+	err := global.GormDao.Model(&model.User{}).
 		Where("account = ?", account).
 		Count(&count).Error
 	return count > 0, err
+}
+
+func (dao *UserDAO) Delete(tx *gorm.DB, ids []int) error {
+	// 删除用户
+	return tx.Where("id in ?", ids).Delete(&model.User{}).Error
+}
+
+func (dao *UserDAO) UpdateStatus(id int, status string) error {
+	return global.GormDao.Model(&model.User{}).
+		Where("id = ?", id).
+		Update("status", status).Error
+}
+
+func (dao *UserDAO) UpdatePassword(id int, password string, salt string) error {
+	return global.GormDao.Model(&model.User{}).
+		Where("id = ?", id).
+		Updates(map[string]interface{}{
+			"password": password,
+			"salt":     salt,
+		}).Error
+
+}
+
+func (dao *UserDAO) Create(tx *gorm.DB, user *model.User) error {
+	return tx.Create(user).Error
+}
+
+func (dao *UserDAO) Update(tx *gorm.DB, user *model.User) error {
+	return tx.Updates(user).Error
 }

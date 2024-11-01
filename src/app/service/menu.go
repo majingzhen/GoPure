@@ -5,6 +5,7 @@ import (
 	"matuto.com/GoPure/src/app/api/view"
 	"matuto.com/GoPure/src/app/dao"
 	"matuto.com/GoPure/src/app/model"
+	"matuto.com/GoPure/src/global"
 	"matuto.com/GoPure/src/utils"
 )
 
@@ -71,8 +72,19 @@ func (s *MenuService) Delete(id string) error {
 	if hasChildren {
 		return errors.New("存在子菜单,不允许删除")
 	}
+	tx := global.GormDao.Begin()
+	if err := dao.Menu.Delete(tx, id); err != nil {
+		tx.Rollback()
+		return err
+	}
 
-	return dao.Menu.Delete(id)
+	// 删除角色菜单
+	if err := dao.RoleMenu.DeleteByMenuId(tx, id); err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
+	return nil
 }
 
 // BuildTree 构建菜单树

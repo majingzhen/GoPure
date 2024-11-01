@@ -3,6 +3,7 @@ package dao
 import (
 	"gorm.io/gorm"
 	"matuto.com/GoPure/src/app/model"
+	"matuto.com/GoPure/src/global"
 )
 
 var RoleMenu = new(RoleMenuDAO)
@@ -21,9 +22,9 @@ func (dao *RoleMenuDAO) GetMenusByRoleId(tx *gorm.DB, roleId int) ([]*model.Menu
 }
 
 // GetMenuIdsByRoleId 根据角色ID获取菜单ID列表
-func (dao *RoleMenuDAO) GetMenuIdsByRoleId(tx *gorm.DB, roleId int) ([]string, error) {
+func (dao *RoleMenuDAO) GetMenuIdsByRoleId(roleId int) ([]string, error) {
 	var menuIds []string
-	err := tx.Model(&model.RoleMenu{}).
+	err := global.GormDao.Model(&model.RoleMenu{}).
 		Where("role_id = ?", roleId).
 		Pluck("menu_id", &menuIds).Error
 	return menuIds, err
@@ -57,4 +58,13 @@ func (dao *RoleMenuDAO) BatchSave(tx *gorm.DB, roleId int, menuIds []string) err
 		}
 	}
 	return tx.Create(&roleMenus).Error
+}
+
+// DeleteByMenuId 根据菜单ID删除角色菜单关联
+func (dao *RoleMenuDAO) DeleteByMenuId(tx *gorm.DB, id string) error {
+	return tx.Where("menu_id = ?", id).Delete(&model.RoleMenu{}).Error
+}
+
+func (dao *RoleMenuDAO) DeleteByRoleIds(tx *gorm.DB, ids []int) error {
+	return tx.Where("role_id in ?", ids).Delete(&model.RoleMenu{}).Error
 }

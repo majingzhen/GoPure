@@ -16,6 +16,10 @@ const (
 	SexFemale = "2" // 女
 )
 
+const (
+	AdminId = 1
+)
+
 // User 用户模型
 type User struct {
 	Id           int        `json:"id" gorm:"primary_key"`
