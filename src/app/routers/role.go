@@ -17,6 +17,8 @@ func (r *RoleRouter) InitRoleRouter(e *gin.Engine) {
 		roleGroup.GET("/add", api.Role.JumpRoleAddView)
 		roleGroup.GET("/edit", api.Role.JumpRoleEditView)
 		roleGroup.GET("/auth", api.Role.JumpRoleAuthView)
+
+		roleGroup.POST("/authRole", api.Role.AuthRole)
 		roleGroup.GET("/list", api.Role.List)
 		roleGroup.GET("/page", api.Role.Page)
 		roleGroup.GET("/get", api.Role.Get)

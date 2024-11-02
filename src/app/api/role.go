@@ -45,7 +45,7 @@ func (api *RoleAPI) Get(c *gin.Context) {
 		response.FailWithMessage("参数错误", c)
 		return
 	}
-	role, err := service.Role.GetById(id)
+	role, err := service.Role.GetInfoById(id)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return

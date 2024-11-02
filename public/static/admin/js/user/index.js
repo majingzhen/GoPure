@@ -238,4 +238,5 @@ function resetPassword(userId) {
             });
         }
     });
-} 
+}
+

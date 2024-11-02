@@ -160,11 +160,10 @@ func (s *RoleService) GetRoleMenus(roleId int) ([]int, error) {
 }
 
 // AuthRole 角色授权
-func (s *RoleService) AuthRole(roleId int, menuIds []int) error {
-	return dao.Role.AuthRole(roleId, menuIds)
+func (s *RoleService) AuthRole(roleId int, menuIds []string) error {
+	return dao.RoleMenu.AuthRole(roleId, menuIds)
 }
 
 func (s *RoleService) GetById(id int) (*model.Role, error) {
 	return dao.Role.GetById(id)
-
 }

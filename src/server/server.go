@@ -35,13 +35,13 @@ func Run() {
 	// 关闭日志颜色
 	gin.DisableConsoleColor()
 	// 创建一个gin引擎
-	router := new(router.Router).InitRouter()
+	engine := new(router.Router).InitRouter()
 	// 获取端口号
 	port := global.Viper.GetInt("server.port")
 	// 创建一个HTTP服务
 	// 启动服务
 	go func() {
-		if err := router.Run(fmt.Sprintf(":%d", port)); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		if err := engine.Run(fmt.Sprintf(":%d", port)); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			global.Logger.Fatal("Server startup failed", zap.Error(err))
 		}
 	}()

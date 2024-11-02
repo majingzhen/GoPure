@@ -96,3 +96,8 @@ function getUrlParam(name) {
     if (r != null) return decodeURI(r[2]);
     return null;
 }
+
+function cancel() {
+    var index = parent.layer.getFrameIndex(window.name);
+    parent.layer.close(index);
+}

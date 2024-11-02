@@ -124,26 +124,3 @@ func (d *RoleDAO) GetRoleMenus(roleId int) ([]int, error) {
 		Pluck("menu_id", &menuIds).Error
 	return menuIds, err
 }
-
-// AuthRole 角色授权
-func (d *RoleDAO) AuthRole(roleId int, menuIds []int) error {
-	return global.GormDao.Transaction(func(tx *gorm.DB) error {
-		// 删除原有权限
-		if err := tx.Table("role_menu").Where("role_id = ?", roleId).Delete(nil).Error; err != nil {
-			return err
-		}
-
-		// 添加新权限
-		if len(menuIds) > 0 {
-			var roleMenus []map[string]interface{}
-			for _, menuId := range menuIds {
-				roleMenus = append(roleMenus, map[string]interface{}{
-					"role_id": roleId,
-					"menu_id": menuId,
-				})
-			}
-			return tx.Table("role_menu").Create(roleMenus).Error
-		}
-		return nil
-	})
-}

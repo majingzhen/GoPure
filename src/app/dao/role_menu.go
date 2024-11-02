@@ -68,3 +68,26 @@ func (dao *RoleMenuDAO) DeleteByMenuId(tx *gorm.DB, id string) error {
 func (dao *RoleMenuDAO) DeleteByRoleIds(tx *gorm.DB, ids []int) error {
 	return tx.Where("role_id in ?", ids).Delete(&model.RoleMenu{}).Error
 }
+
+// AuthRole 角色授权
+func (dao *RoleMenuDAO) AuthRole(roleId int, menuIds []string) error {
+	return global.GormDao.Transaction(func(tx *gorm.DB) error {
+		// 删除原有权限
+		if err := tx.Model(model.RoleMenu{}).Where("role_id = ?", roleId).Delete(nil).Error; err != nil {
+			return err
+		}
+
+		// 添加新权限
+		if len(menuIds) > 0 {
+			var roleMenus []map[string]interface{}
+			for _, menuId := range menuIds {
+				roleMenus = append(roleMenus, map[string]interface{}{
+					"role_id": roleId,
+					"menu_id": menuId,
+				})
+			}
+			return tx.Model(model.RoleMenu{}).Create(roleMenus).Error
+		}
+		return nil
+	})
+}

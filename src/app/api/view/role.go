@@ -40,6 +40,6 @@ type RoleDeleteReqVO struct {
 
 // RoleAuthReqVO 角色授权请求
 type RoleAuthReqVO struct {
-	Id      int   `json:"id" binding:"required"`
-	MenuIds []int `json:"menuIds"`
+	Id      int      `json:"id" binding:"required"`
+	MenuIds []string `json:"menuIds"`
 }

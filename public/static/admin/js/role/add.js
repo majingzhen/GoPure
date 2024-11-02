@@ -16,4 +16,8 @@ layui.use(['form', 'layer'], function(){
             });
         return false;
     });
-}); 
+});
+function cancel() {
+    var index = parent.layer.getFrameIndex(window.name);
+    parent.layer.close(index);
+}

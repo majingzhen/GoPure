@@ -147,7 +147,7 @@ function openMenuEditForm(id) {
         area: common.layerArea($("html")[0].clientWidth, 500, 400),
         shadeClose: true,
         anim: 1,
-        content: '/menu/edit?pid=' + pid
+        content: '/menu/edit?id=' + id
     });
 }
 

@@ -4,7 +4,7 @@ const toolbarTpl = `
         <button class="layui-btn layui-btn-sm" lay-event="edit">
             <i class="layui-icon layui-icon-edit"></i>
         </button>
-        <button class="layui-btn layui-btn-warm layui-btn-sm" lay-event="resetPwd">
+        <button class="layui-btn layui-btn-warm layui-btn-sm" lay-event="auth">
             <i class="layui-icon layui-icon-key"></i>
         </button>
         <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">
@@ -167,11 +167,9 @@ function openRoleAuthForm(id) {
     layer.open({
         type: 2,
         title: '角色授权',
-        area: ['600px', '80%'],
-        content: '/role/auth?id=' + id,
-        maxmin: true,
-        end: function(){
-            layui.table.reload('roleTable');
-        }
+        area: common.layerArea($("html")[0].clientWidth, 600, 600),
+        shadeClose: true,
+        anim: 1,
+        content: '/role/auth?id=' + id
     });
-} 
+}
