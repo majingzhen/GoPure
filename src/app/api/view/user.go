@@ -63,7 +63,7 @@ type UserDeleteReqVO struct {
 
 // UserStatusReqVO 更新用户状态请求
 type UserStatusReqVO struct {
-	Id     int    `json:"id,string" binding:"required"`
+	Id     int    `json:"id" binding:"required"`
 	Status string `json:"status" binding:"required"`
 }
 
