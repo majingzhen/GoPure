@@ -30,6 +30,19 @@
         </div>
         
         <div class="layui-form-item">
+            <label class="layui-form-label">头像</label>
+            <div class="layui-input-block">
+                <div class="layui-upload">
+                    <button type="button" class="layui-btn" id="avatarUpload">上传头像</button>
+                    <div class="layui-upload-list">
+                        <img class="layui-upload-img" id="avatarPreview" style="max-width: 100px;">
+                    </div>
+                </div>
+                <input type="hidden" name="avatar" id="avatarInput">
+            </div>
+        </div>
+        
+        <div class="layui-form-item">
             <label class="layui-form-label">密码</label>
             <div class="layui-input-block">
                 <input type="password" name="password" required lay-verify="required" 

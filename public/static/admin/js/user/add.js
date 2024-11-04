@@ -1,9 +1,37 @@
-
 var layer, form,$, addRoleSelect;
-layui.use(['form', 'layer'], function(){
+layui.use(['form', 'upload', 'layer'], function(){
     form = layui.form;
+    upload = layui.upload;
     layer = layui.layer;
     addRoleSelect; // 保存xmSelect实例
+
+    // 初始化头像上传
+    upload.render({
+        elem: '#avatarUpload',
+        url: '/upload',
+        accept: 'images',
+        acceptMime: 'image/*',
+        field: 'file',
+        before: function(obj){
+            obj.preview(function(index, file, result){
+                $('#avatarPreview').attr('src', result);
+            });
+            layer.load();
+        },
+        done: function(res){
+            layer.closeAll('loading');
+            if(res.code === 0){
+                // 将返回的图片URL存储到隐藏域
+                $('#avatarInput').val(res.data);
+            } else {
+                layer.msg(res.msg);
+            }
+        },
+        error: function(){
+            layer.closeAll('loading');
+            layer.msg(res.msg, {icon: 2});
+        }
+    });
 
     // 初始化表单
     initForm();
@@ -12,7 +40,6 @@ layui.use(['form', 'layer'], function(){
         var formData = data.field;
         // 获取选中的角色ID
         formData.roleIds = addRoleSelect.getValue().map(obj => obj.id);
-        console.log(formData)
         // 提交表单
         request.post('/user/add', formData)
             .then(() => {

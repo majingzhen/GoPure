@@ -25,14 +25,14 @@ type User struct {
 	Id           int        `json:"id" gorm:"primary_key"`
 	Account      string     `json:"account" gorm:"unique"`
 	UserName     string     `json:"userName" gorm:"column:user_name"`
-	Password     string     `json:"password"`
-	Salt         string     `json:"salt"`
+	Password     string     `json:"password" gorm:"column:password"`
+	Salt         string     `json:"salt" gorm:"column:salt"`
 	Status       string     `json:"status" gorm:"type:char(1);default:'0'"`
-	Avatar       string     `json:"avatar,omitempty"`
-	Email        string     `json:"email,omitempty"`
-	Website      string     `json:"website,omitempty"`
-	Remark       string     `json:"remark,omitempty"`
-	Mobile       string     `json:"mobile"`
+	Avatar       string     `json:"avatar,omitempty" gorm:"column:avatar"`
+	Email        string     `json:"email,omitempty" gorm:"column:email"`
+	Website      string     `json:"website,omitempty" gorm:"column:website"`
+	Remark       string     `json:"remark,omitempty" gorm:"column:remark"`
+	Mobile       string     `json:"mobile" gorm:"column:mobile"`
 	Sex          string     `json:"sex" gorm:"type:char(1)"`
 	LoginIP      string     `json:"loginIp" gorm:"column:login_ip"`
 	LoginDate    *time.Time `json:"loginDate,omitempty" gorm:"column:login_date"`

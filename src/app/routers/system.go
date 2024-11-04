@@ -22,5 +22,8 @@ func InitSystemRouter(r *gin.Engine) {
 		// 首页
 		loginGroup.GET("/", api.System.JumpHomeView)
 		loginGroup.GET("/welcome", api.System.JumpWelcomeView)
+
+		// 上传文件
+		loginGroup.POST("/upload", api.Upload.Upload)
 	}
 }

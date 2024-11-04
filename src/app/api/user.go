@@ -118,19 +118,9 @@ func (api *UserAPI) Update(c *gin.Context) {
 		return
 	}
 	// 判断用户是否为管理员
-	roles, err := service.Role.GetByUserId(req.Id)
-	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+	if user.Id == model.AdminId {
+		response.FailWithMessage("不能修改管理员账号", c)
 		return
-	}
-	if len(roles) > 0 {
-		// 如果是管理员用户，则不允许修改
-		for _, role := range roles {
-			if role.Code == model.RoleAdmin {
-				response.FailWithMessage("管理员用户不允许修改", c)
-				return
-			}
-		}
 	}
 	// 更新基本信息
 	user.UserName = req.UserName
@@ -139,6 +129,7 @@ func (api *UserAPI) Update(c *gin.Context) {
 	user.Email = req.Email
 	user.Sex = req.Sex
 	user.Remark = req.Remark
+	user.Avatar = req.Avatar
 	// 更新用户
 	err = service.User.Update(user, req.RoleIds)
 	if err != nil {

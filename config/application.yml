@@ -1,7 +1,11 @@
 server:
   model: debug
   port: 18080
-  image_path: public/images
+
+upload:
+  image_path: "public/uploads/images"  # 图片上传保存路径
+  allowed_types: ["jpg", "jpeg", "png", "gif"]  # 允许上传的图片类型
+  max_size: 5242880
 
 logger:
   # 日志级别

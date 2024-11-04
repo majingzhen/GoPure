@@ -25,6 +25,7 @@ function getLoginUser() {
     request.get('/getLoginUser')
         .then(res => {
             $('#userName').text(res.data.userName);
+            $('#userAvatar').attr('src', res.data.avatar);
             renderMenuTree(res.data.menus);
         });
 }

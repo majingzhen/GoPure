@@ -23,6 +23,7 @@ func (r *Router) InitRouter() *gin.Engine {
 	// 前端文件
 	e.HTMLRender = LoadTemplateFiles("public/templates", ".html")
 	e.Static("/static", "./public/static")
+	e.Static("/uploads", "./public/uploads")
 	// 使用中间件
 	e.Use(middleware.GinLogger())
 	e.Use(gin.Recovery())

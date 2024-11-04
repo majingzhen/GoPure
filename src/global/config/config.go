@@ -6,6 +6,7 @@ type Configuration struct {
 	Logger     LoggerConfig     `mapstructure:"logger"`
 	Session    SessionConfig    `mapstructure:"session"`
 	Datasource DatasourceConfig `mapstructure:"datasource"`
+	Upload     UploadConfig     `mapstructure:"upload"`
 }
 
 // ServerConfig 服务器配置
@@ -13,6 +14,13 @@ type ServerConfig struct {
 	Model     string `mapstructure:"model"`
 	Port      int    `mapstructure:"port"`
 	ImagePath string `mapstructure:"image_path"`
+}
+
+// UploadConfig 上传配置
+type UploadConfig struct {
+	ImagePath    string   `mapstructure:"image_path"`
+	AllowedTypes []string `mapstructure:"allowed_types"`
+	MaxSize      int64    `mapstructure:"max_size"`
 }
 
 // LoggerConfig 日志配置

@@ -53,6 +53,7 @@ type UserUpdateReqVO struct {
 	Sex      string `json:"sex"`
 	Remark   string `json:"remark"`
 	RoleIds  []int  `json:"roleIds"` // 角色ID列表
+	Avatar   string `json:"avatar"`
 }
 
 // UserDeleteReqVO 删除用户请求
