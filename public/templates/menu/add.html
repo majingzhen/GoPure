@@ -28,30 +28,20 @@
                        placeholder="请输入菜单名称" autocomplete="off" class="layui-input">
             </div>
         </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">菜单链接</label>
+            <div class="layui-input-block">
+                <input type="text" name="url" required lay-verify="required" placeholder="请输入菜单链接"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
         
         <div class="layui-form-item">
             <label class="layui-form-label">显示顺序</label>
             <div class="layui-input-block">
                 <input type="number" name="seq" required lay-verify="required" 
                        placeholder="请输入显示顺序" autocomplete="off" class="layui-input" value="0">
-            </div>
-        </div>
-        
-        <div id="routeInfo" style="display: none;">
-            <div class="layui-form-item">
-                <label class="layui-form-label">菜单链接</label>
-                <div class="layui-input-block">
-                    <input type="text" name="url" placeholder="请输入菜单链接" 
-                           autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            
-            <div class="layui-form-item">
-                <label class="layui-form-label">组件路径</label>
-                <div class="layui-input-block">
-                    <input type="text" name="component" placeholder="请输入组件路径" 
-                           autocomplete="off" class="layui-input">
-                </div>
             </div>
         </div>
         
