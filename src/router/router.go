@@ -23,13 +23,12 @@ func (r *Router) InitRouter() *gin.Engine {
 	// 前端文件
 	e.HTMLRender = LoadTemplateFiles("public/templates", ".html")
 	e.Static("/static", "./public/static")
-
 	// 使用中间件
 	e.Use(middleware.GinLogger())
 	e.Use(gin.Recovery())
 	// 将LoginUserVO 类型 注册到gob中，允许在session中存储该类型
 	gob.Register(view.LoginUserVO{})
-	store := cookie.NewStore([]byte(global.Viper.GetString("session.secret")))
+	store := cookie.NewStore([]byte(global.Config.Session.Secret))
 	store.Options(sessions.Options{
 		Path:   "/",
 		MaxAge: global.Viper.GetInt("session.expire"),

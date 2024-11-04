@@ -10,6 +10,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
+	"matuto.com/GoPure/src/global/config"
 	"os"
 	"time"
 )
@@ -21,6 +22,8 @@ var (
 	Viper *viper.Viper
 	// Logger 日志对象
 	Logger *zap.Logger
+	// Config 配置对象
+	Config *config.Configuration
 )
 
 // InitViper 初始化配置
@@ -32,27 +35,33 @@ func InitViper() {
 	Viper.SetConfigName("application") // 文件名，没有后缀
 	// 读取配置文件
 	if err := Viper.ReadInConfig(); err != nil {
-		panic("读取配置文件错误")
+		panic("读取配置文件错误: " + err.Error())
+	}
+
+	// 将配置映射到结构体
+	Config = &config.Configuration{}
+	if err := Viper.Unmarshal(Config); err != nil {
+		panic("解析配置文件错误: " + err.Error())
 	}
 }
 
 // InitDataSource 初始化数据库
 func InitDataSource() {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=True&loc=Local",
-		Viper.GetString("datasource.username"),
-		Viper.GetString("datasource.password"),
-		Viper.GetString("datasource.host"),
-		Viper.GetString("datasource.port"),
-		Viper.GetString("datasource.db_name"))
+		Config.Datasource.Username,
+		Config.Datasource.Password,
+		Config.Datasource.Host,
+		Config.Datasource.Port,
+		Config.Datasource.DBName)
 	gcf := &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
-			TablePrefix:   Viper.GetString("datasource.table_prefix"), // 控制表前缀
+			TablePrefix:   Config.Datasource.TablePrefix,
 			SingularTable: true,
 		},
-		Logger: logger.Default, // 控制是否sql输出，默认是不输出
+		Logger: logger.Default,
 	}
-	if Viper.GetBool("datasource.log_mode") {
-		gcf.Logger = NewGormLogger() // 使用zap进行日志输出
+	if Config.Datasource.LogMode {
+		gcf.Logger = NewGormLogger()
 	}
 
 	if tmp, err := gorm.Open(mysql.Open(dsn), gcf); err != nil {
@@ -80,7 +89,7 @@ func InitDataSource() {
 
 // InitLogger 初始化日志
 func InitLogger() {
-	logPath := Viper.GetString("logger.file_path")
+	logPath := Config.Logger.FilePath
 	if logPath == "" {
 		logPath = "./log/manager.log" // 如果未配置日志路径，则默认在项目根目录下创建log目录
 	}
@@ -94,7 +103,7 @@ func InitLogger() {
 	}
 	// 配置日志级别
 	atomicLevel := zap.NewAtomicLevel()
-	logLevel := Viper.GetInt32("logger.level")
+	logLevel := Config.Logger.Level
 	atomicLevel.SetLevel(zapcore.Level(logLevel))
 	// 创建编码器
 	// 设置日志格式
