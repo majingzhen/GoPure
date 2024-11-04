@@ -1,6 +1,7 @@
 server:
   model: debug
   port: 18080
+  image_path: public/images
 
 logger:
   # 日志级别
