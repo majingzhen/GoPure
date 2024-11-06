@@ -52,6 +52,12 @@ func (api *SystemAPI) Login(c *gin.Context) {
 		response.FailWithMessage("用户不存在", c)
 		return
 	}
+
+	// 查询用户是否被禁用
+	if byUserName.Status == model.UserStatusDisabled {
+		response.FailWithMessage("用户被禁用", c)
+		return
+	}
 	// 取加密密码
 	hashedPassword := utils.EncryptionPassword(loginUserView.Password, byUserName.Salt)
 	if hashedPassword != byUserName.Password {

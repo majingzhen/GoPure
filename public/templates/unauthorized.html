@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>未授权访问</title>
+    <script src="/static/module/jquery/jquery-3.7.1.min.js"></script>
+    <script src="/static/module/layui/layui.js"></script>
+    <script>
+        // 确保 jQuery 和 Layui 都加载完成
+        $(function() {
+            function handleUnauthorized() {
+                if (window.self !== window.top) {
+                    try {
+                        // 尝试直接设置顶层窗口的位置
+                        window.top.location.href = '{{.loginUrl}}';
+                    } catch (e) {
+                        // 如果直接设置失败，尝试通过消息通知
+                        window.parent.postMessage({
+                            type: 'SESSION_EXPIRED',
+                            url: '{{.loginUrl}}'
+                        }, '*');
+                    }
+                } else {
+                    // 如果不在 iframe 中，直接跳转
+                    window.location.href = '{{.loginUrl}}';
+                }
+            }
+
+            // 添加延迟确保消息能被正确处理
+            setTimeout(handleUnauthorized, 100);
+        });
+    </script>
+</head>
+<body>
+<div style="text-align: center; padding: 20px;">
+    <h3>{{.message}}</h3>
+    <p>正在跳转到登录页面...</p>
+</div>
+</body>
+</html>

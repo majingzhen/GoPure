@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数据字典</title>
+    <link rel="stylesheet" href="/static/module/layui/css/layui.css">
+    <script src="/static/module/jquery/jquery-3.7.1.min.js"></script>
+    <script src="/static/module/layui/layui.js"></script>
+    <script src="/static/js/request.js"></script>
+    <script src="/static/js/common.js"></script>
+    <script src="/static/admin/js/dict/index.js"></script>
+</head>
+<body>
+    <div class="layui-form layui-form-pane" style="margin: 15px;">
+      <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">字典名称</label>
+          <div class="layui-input-inline">
+            <input type="text" name="dictName" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-inline">
+          <label class="layui-form-label">字典类型</label>
+          <div class="layui-input-inline">
+            <input type="text" name="dictType" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-inline">
+          <label class="layui-form-label">状态</label>
+          <div class="layui-input-inline">
+            <select name="status">
+              <option value="">全部</option>
+              <option value="0">正常</option>
+              <option value="1">禁用</option>
+            </select>
+          </div>
+        </div>
+        <div class="layui-inline">
+          <button class="layui-btn" lay-submit lay-filter="searchForm">
+            <i class="layui-icon layui-icon-search"></i> 搜索
+          </button>
+          <button class="layui-btn layui-btn-primary" type="reset">
+            <i class="layui-icon layui-icon-refresh"></i> 重置
+          </button>
+          <button class="layui-btn layui-btn-normal" type="add">
+            <i class="layui-icon layui-icon-add-1"></i> 新增
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- 数据表格 -->
+    <table id="dictTable" lay-filter="dictTable"></table>
+
+</body>
+</html>

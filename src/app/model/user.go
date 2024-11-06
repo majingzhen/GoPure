@@ -45,3 +45,9 @@ type User struct {
 func (User) TableName() string {
 	return "p_user"
 }
+
+// 用户状态
+const (
+	UserStatusEnabled  = "0" // 启用
+	UserStatusDisabled = "1" // 禁用
+)

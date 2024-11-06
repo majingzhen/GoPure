@@ -11,7 +11,6 @@ func AuthMiddleware() gin.HandlerFunc {
 		session := sessions.Default(c)
 		user := session.Get("user")
 		if user == nil {
-			// 重定向到登录页
 			// 检查是否是 AJAX 请求
 			if c.GetHeader("X-Requested-With") == "XMLHttpRequest" {
 				c.JSON(http.StatusUnauthorized, gin.H{
@@ -20,7 +19,11 @@ func AuthMiddleware() gin.HandlerFunc {
 					"redirect": "/login",
 				})
 			} else {
-				c.Redirect(http.StatusFound, "/login")
+				// 不再检查 Sec-Fetch-Dest，统一返回 unauthorized.html
+				c.HTML(http.StatusUnauthorized, "unauthorized.html", gin.H{
+					"message":  "会话已过期，请重新登录",
+					"loginUrl": "/login",
+				})
 			}
 			c.Abort()
 			return

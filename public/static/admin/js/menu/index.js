@@ -143,7 +143,6 @@ function openMenuEditForm(id) {
     layer.open({
         type: 2,
         title: '编辑菜单',
-        type: 2,
         area: common.layerArea($("html")[0].clientWidth, 500, 400),
         shadeClose: true,
         anim: 1,

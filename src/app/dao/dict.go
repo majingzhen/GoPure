@@ -2,6 +2,7 @@ package dao
 
 import (
 	"gorm.io/gorm"
+	"matuto.com/GoPure/src/app/api/view"
 	"matuto.com/GoPure/src/app/model"
 	"matuto.com/GoPure/src/common"
 	"matuto.com/GoPure/src/global"
@@ -26,21 +27,20 @@ func (dao *DictDAO) GetDictByType(tx *gorm.DB, dictType string) (*model.Dict, er
 }
 
 // Page 获取字典分页列表
-func (dao *DictDAO) Page(pageNum, pageSize int, query map[string]interface{}) (*common.PageInfo, error) {
+func (dao *DictDAO) Page(req view.DictReqPageVO) (*common.PageInfo, error) {
 	db := global.GormDao.Model(&model.Dict{})
 
 	// 添加查询条件
-	if dictType, ok := query["dictType"].(string); ok && dictType != "" {
-		db = db.Where("dictType LIKE ?", "%"+dictType+"%")
+	if req.DictType != "" {
+		db = db.Where("dict_type = ?", req.DictType)
 	}
-	if dictName, ok := query["dictName"].(string); ok && dictName != "" {
-		db = db.Where("dictName LIKE ?", "%"+dictName+"%")
+	if req.DictName != "" {
+		db = db.Where("dict_name like ?", "%"+req.DictName+"%")
 	}
-	if status, ok := query["status"].(int8); ok {
-		db = db.Where("status = ?", status)
+	if req.Status != "" {
+		db = db.Where("status = ?", req.Status)
 	}
-
-	page := common.CreatePageInfo(pageNum, pageSize)
+	page := common.CreatePageInfo(req.PageNum, req.PageSize)
 	if err := db.Count(&page.Total).Error; err != nil {
 		return nil, err
 	}
@@ -50,4 +50,20 @@ func (dao *DictDAO) Page(pageNum, pageSize int, query map[string]interface{}) (*
 	err := db.Order("seq").Offset(page.Offset).Limit(page.Limit).Find(&dataList).Error
 	page.Rows = dataList
 	return page, err
+}
+
+func (dao *DictDAO) Add(m *model.Dict) error {
+	return global.GormDao.Create(m).Error
+}
+
+func (dao *DictDAO) Delete(id int) error {
+	return global.GormDao.Where("id = ?", id).Delete(&model.Dict{}).Error
+}
+
+func (dao *DictDAO) Update(m *model.Dict) error {
+	return global.GormDao.Updates(m).Error
+}
+
+func (dao *DictDAO) UpdateStatus(id int, status string) error {
+	return global.GormDao.Model(&model.Dict{}).Where("id = ?", id).Update("status", status).Error
 }

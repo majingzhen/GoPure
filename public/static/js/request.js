@@ -184,13 +184,27 @@
          * 重定向到登录页
          */
         redirectToLogin: function() {
-            // 如果已经在登录页，不需要重定向
             if (window.location.pathname === '/login') {
                 return;
             }
-            // 保存当前页面URL，登录后可以跳回来
-            const currentPath = encodeURIComponent(window.location.pathname + window.location.search);
-            window.location.href = `/login?redirect=${currentPath}`;
+
+            const loginUrl = '/login';
+
+            if (window.self !== window.top) {
+                try {
+                    // 尝试直接设置顶层窗口的位置
+                    window.top.location.href = loginUrl;
+                } catch (e) {
+                    // 如果直接设置失败，尝试通过消息通知
+                    window.parent.postMessage({
+                        type: 'SESSION_EXPIRED',
+                        url: loginUrl
+                    }, '*');
+                }
+            } else {
+                // 如果不在 iframe 中，直接跳转
+                window.location.href = loginUrl;
+            }
         }
     };
 

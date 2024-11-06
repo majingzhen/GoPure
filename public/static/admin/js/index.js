@@ -1,3 +1,20 @@
+// 确保在 layui.use 之前就添加监听器
+window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'SESSION_EXPIRED') {
+        // 使用 layui 的 layer 模块显示提示
+        layui.use(['layer'], function(){
+            var layer = layui.layer;
+            layer.msg('会话已过期，即将跳转到登录页面...', {
+                icon: 2,
+                time: 1500
+            }, function(){
+                // 提示后跳转
+                window.location.href = event.data.url || '/login';
+            });
+        });
+    }
+}, false);
+
 
 var element;
 // 使用新的layui模块加载方式
