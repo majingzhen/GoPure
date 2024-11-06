@@ -21,7 +21,11 @@ layui.use(['form', 'layer'], function(){
         
         // 提交表单
         request.post('/menu/update', formData)
-            .then(() => {
+            .then(res => {
+                if (res.code !== 0) {
+                    layer.msg(res.msg, {icon: 2});
+                    return;
+                }
                 layer.msg('保存成功');
                 // 关闭弹窗并刷新父页面
                 var index = parent.layer.getFrameIndex(window.name);

@@ -46,11 +46,6 @@ function queryTable() {
         method: 'get',
         title: '菜单列表',
         totalRow: false,
-        where: {
-            form: {
-                name: $("#name").val()
-            }
-        },
         parseData: function (res) {
             return {
                 "code": res.code,
@@ -61,14 +56,18 @@ function queryTable() {
         },
         cols: [[
             {field: 'id', title: 'ID', width: 80},
-            {field: 'name', minWidth: 160,title: '菜单名'},
+            {
+                field: 'name', 
+                minWidth: 160,
+                title: '菜单名'
+            },
             {field: 'url', minWidth: 200,title: '菜单链接'},
             {
                 field: 'icon',
                 align: 'center',
                 title: '图标',
                 minWidth: 80,
-                templet: "<div><i class='fa {{d.icon}}' aria-hidden='true'></i></div>"
+                templet: "<div><i class='{{d.icon}}' aria-hidden='true'></i></div>"
             },
             {field: 'target', minWidth: 120,title: '打开方式', templet: "<div>{{d.target === '0' ? '本页' : '新窗口'}}</div>"},
             {
@@ -134,7 +133,10 @@ function add(pid = -1) {
         area: common.layerArea($("html")[0].clientWidth, 500, 400),
         shadeClose: true,
         anim: 1,
-        content: '/menu/add?pid=' + pid
+        content: '/menu/add?pid=' + pid,
+        end: function () {
+            queryTable();
+        }
     });
 }
 
@@ -146,7 +148,10 @@ function openMenuEditForm(id) {
         area: common.layerArea($("html")[0].clientWidth, 500, 400),
         shadeClose: true,
         anim: 1,
-        content: '/menu/edit?id=' + id
+        content: '/menu/edit?id=' + id,
+        end: function () {
+            queryTable();
+        }
     });
 }
 
