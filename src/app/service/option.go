@@ -27,8 +27,8 @@ func (service *OptionService) Page(pageVo view.OptionReqPageVO) (*common.PageInf
 	return dao.Option.Page(pageVo)
 }
 
-func (service *OptionService) GetList() ([]*model.Option, error) {
-	return dao.Option.GetList()
+func (service *OptionService) GetList(req view.OptionReqListVO) ([]*model.Option, error) {
+	return dao.Option.GetList(req)
 }
 
 func (service *OptionService) Add(m *model.Option) error {

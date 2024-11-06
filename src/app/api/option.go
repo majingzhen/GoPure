@@ -30,7 +30,12 @@ func (c *OptionController) Page(ctx *gin.Context) {
 
 // List 获取选项列表
 func (c *OptionController) List(ctx *gin.Context) {
-	list, err := service.Option.GetList()
+	var req view.OptionReqListVO
+	if err := ctx.ShouldBind(&req); err != nil {
+		response.FailWithMessage(err.Error(), ctx)
+		return
+	}
+	list, err := service.Option.GetList(req)
 	if err != nil {
 		response.FailWithMessage(err.Error(), ctx)
 		return
@@ -103,6 +108,22 @@ func (c *OptionController) Get(ctx *gin.Context) {
 	}
 	//
 	option, err := service.Option.GetById(id)
+	if err != nil {
+		response.FailWithMessage(err.Error(), ctx)
+		return
+	}
+	response.OkWithData(option, ctx)
+}
+
+// GetOptionById 根据id获取选项
+func (c *OptionController) GetOptionById(ctx *gin.Context) {
+	id := utils.GetIntParam(ctx, "id")
+	if id == 0 {
+		response.FailWithMessage("参数错误", ctx)
+		return
+	}
+	//
+	option, err := service.Option.GetOptionById(id)
 	if err != nil {
 		response.FailWithMessage(err.Error(), ctx)
 		return

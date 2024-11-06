@@ -46,9 +46,17 @@ func (dao *OptionDAO) Page(pageVo view.OptionReqPageVO) (*common.PageInfo, error
 }
 
 // GetList 获取选项列表
-func (dao *OptionDAO) GetList() ([]*model.Option, error) {
+func (dao *OptionDAO) GetList(req view.OptionReqListVO) ([]*model.Option, error) {
 	var list []*model.Option
-	err := global.GormDao.Find(&list).Error
+	db := global.GormDao.Model(&model.Option{})
+	// 添加查询条件
+	if req.Key != "" {
+		db = db.Where("`key` like ?", "%"+req.Key+"%")
+	}
+	if req.Identification != "" {
+		db = db.Where("identification = ?", req.Identification)
+	}
+	err := db.Find(&list).Error
 	return list, err
 }
 

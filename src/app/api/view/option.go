@@ -16,3 +16,9 @@ type OptionReqEditVO struct {
 	Title          string `json:"title" form:"title"`
 	Identification string `json:"identification" form:"identification"`
 }
+
+// OptionReqListVO 选项列表请求
+type OptionReqListVO struct {
+	Key            string `json:"key" form:"key"`
+	Identification string `json:"identification" form:"identification"`
+}
