@@ -130,6 +130,13 @@ function buildSubMenuHtml(menu) {
 
 // 构建菜单链接
 function buildMenuLink(menu) {
+    // 如果是首页，使用特殊处理
+    if (menu.url === '/' || menu.url === '/welcome') {
+        return '<a href="javascript:;" class="menu-link" data-url="' + menu.url + '" data-title="首页">' +
+            (menu.icon ? '<i class="layui-icon ' + menu.icon + '"></i> ' : '') +
+            menu.name + '</a>';
+    }
+
     if (menu.target === '1') {
         // 新窗口打开
         return '<a href="' + menu.url + '" target="_blank">' +
@@ -165,6 +172,12 @@ function bindMenuClick() {
 
 // 打开新标签页
 function openTab(url, title) {
+    // 如果是首页路径，直接返回
+    if (url === '/' || url === '/welcome') {
+        element.tabChange('mainTabs', 'home');
+        return;
+    }
+
     // 如果标签已存在，切换到该标签
     var layId = url.replace(/\//g, '_');
     var exists = $(".layui-tab-title li[lay-id='" + layId + "']").length > 0;

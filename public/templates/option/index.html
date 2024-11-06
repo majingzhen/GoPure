@@ -23,23 +23,20 @@
                 <i class="layui-icon layui-icon-search"></i> 搜索
             </button>
         </div>
-    </div>
-</div>
-    <div class="layui-card">
-        <div class="layui-card-header">
+        <div class="layui-inline">
             <button class="layui-btn" onclick="add()">
                 <i class="layui-icon">&#xe654;</i> 添加
             </button>
         </div>
-        <div class="layui-card-body">
-            <table id="optionTable" lay-filter="optionTable"></table>
-        </div>
     </div>
+</div>
 
     <!-- 操作列模板 -->
     <script type="text/html" id="optionBar">
         <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
     </script>
+
+    <table id="optionTable" lay-filter="optionTable"></table>
 </body>
 </html> 

@@ -70,7 +70,7 @@ function queryTable() {
                 minWidth: 80,
                 templet: "<div><i class='fa {{d.icon}}' aria-hidden='true'></i></div>"
             },
-            {field: 'target', minWidth: 120,title: '打开方式', templet: "<div>{{d.target === 0 ? '本页' : '新窗口'}}</div>"},
+            {field: 'target', minWidth: 120,title: '打开方式', templet: "<div>{{d.target === '0' ? '本页' : '新窗口'}}</div>"},
             {
                 field: 'status', minWidth: 100,title: '状态', templet: function (d) {
                     let html;

@@ -115,11 +115,23 @@ layui.use(['table', 'form', 'layer'], function(){
             delete data.field.status;
         }
         
-        table.reload('optionTable', {
+        table.reload('userTable', {
             where: data.field,
             page: {curr: 1}
         });
         return false;
+    });
+    // 重置按钮
+    $('button[type="reset"]').click(function(){
+        $('input[name="account"]').val('');
+        $('input[name="userName"]').val('');
+        $('select[name="status"]').val('');
+        form.render('select');
+        // 重新加载表格数据
+        table.reload('userTable', {
+            where: {},
+            page: {curr: 1}
+        });
     });
 
     // 头部工具栏事件
