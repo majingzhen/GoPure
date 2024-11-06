@@ -14,8 +14,8 @@ type DictData struct {
 	Seq             int        `json:"seq" gorm:"column:seq;not null;default:0;comment:排序"`
 	DictType        string     `json:"dictType" gorm:"column:dict_type;size:255;not null;comment:字典类型"`
 	ParentDictType  string     `json:"parentDictType" gorm:"column:parent_dict_type;size:255;not null;comment:父级字典类型"`
-	CreateTime      time.Time  `json:"createTime" gorm:"column:create_time"`
-	UpdateTime      *time.Time `json:"updateTime" gorm:"column:update_time"`
+	CreateTime      time.Time  `json:"createTime" gorm:"autoCreateTime"`
+	UpdateTime      *time.Time `json:"updateTime" gorm:"autoUpdateTime"`
 	CreateUserID    *int       `json:"createUserId,omitempty" gorm:"column:create_user_id"`
 	UpdateUserID    *int       `json:"updateUserId,omitempty" gorm:"column:update_user_id"`
 }

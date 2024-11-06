@@ -114,7 +114,7 @@ function loadTable() {
                 field: 'dictType',
                 title: '字典类型',
                 templet: function(d) {
-                    return '<a href="javascript:;" lay-event="dictData" class="layui-table-link">' + d.dictType + '</a>';
+                    return '<a href="/dict/data?type=' + d.dictType + '" lay-event="dictData" class="layui-table-link">' + d.dictType + '</a>';
                 }
             },
             {

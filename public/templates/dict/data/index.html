@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>字典数据管理</title>
+    <link rel="stylesheet" href="/static/module/layui/css/layui.css">
+    <script src="/static/module/layui/layui.js"></script>
+    <script src="/static/module/jquery/jquery-3.7.1.min.js"></script>
+    <script src="/static/js/request.js"></script>
+    <script src="/static/js/common.js"></script>
+    <script src="/static/admin/js/dict/data/index.js"></script>
+</head>
+<body>
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <!-- 搜索表单 -->
+            <form class="layui-form layui-form-pane" lay-filter="searchForm">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">字典标签</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="dictLabel" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">状态</label>
+                        <div class="layui-input-inline">
+                            <select name="status">
+                                <option value="">全部</option>
+                                <option value="0">正常</option>
+                                <option value="1">停用</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn layui-btn-sm" lay-submit lay-filter="searchForm">
+                            <i class="layui-icon">&#xe615;</i> 搜索
+                        </button>
+                        <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">
+                            重置
+                        </button>
+                        <button class="layui-btn layui-btn-normal layui-btn-sm" type="add">
+                            <i class="layui-icon layui-icon-add-1"></i> 新增
+                        </button>
+                        <button class="layui-btn layui-btn-danger layui-btn-sm" type="close">
+                            <i class="layui-icon layui-icon-close"></i> 关闭
+                        </button>
+                    </div>
+                </div>
+            </form>
+            
+            <!-- 数据表格 -->
+            <table id="dictDataTable" lay-filter="dictDataTable"></table>
+        </div>
+    </div>
+
+    <!-- 表格工具栏模板 -->
+    <script type="text/html" id="dictDataBar">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    </script>
+
+    <!-- 状态模板 -->
+
+</body>
+</html> 

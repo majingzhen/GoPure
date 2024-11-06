@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>添加字典数据</title>
+    <link rel="stylesheet" href="/static/module/layui/css/layui.css">
+    <script src="/static/module/layui/layui.js"></script>
+    <script src="/static/module/jquery/jquery-3.7.1.min.js"></script>
+    <script src="/static/js/request.js"></script>
+    <script src="/static/admin/js/dict/data/add.js"></script>
+</head>
+<body style="padding: 20px;">
+    <form class="layui-form" lay-filter="dictDataAddForm">
+        <input type="hidden" name="dictType"
+               placeholder="请输入字典类型" autocomplete="off" class="layui-input">
+        <div class="layui-form-item">
+            <label class="layui-form-label">字典标签</label>
+            <div class="layui-input-block">
+                <input type="text" name="dictLabel" required lay-verify="required" 
+                       placeholder="请输入字典标签" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">字典键值</label>
+            <div class="layui-input-block">
+                <input type="text" name="dictValue" required lay-verify="required" 
+                       placeholder="请输入字典键值" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">扩展值</label>
+            <div class="layui-input-block">
+                <input type="text" name="dictExtendValue" 
+                       placeholder="请输入扩展值" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序</label>
+            <div class="layui-input-block">
+                <input type="number" name="seq" value="0" class="layui-input">
+            </div>
+        </div>
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+                <input type="radio" name="status" value="0" title="正常" checked>
+                <input type="radio" name="status" value="1" title="停用">
+            </div>
+        </div>
+        
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="dictDataAddForm">提交</button>
+                <button type="button" class="layui-btn layui-btn-primary" onclick="cancel()">取消</button>
+            </div>
+        </div>
+    </form>
+</body>
+</html> 

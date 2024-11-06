@@ -1,6 +1,7 @@
 package service
 
 import (
+	"matuto.com/GoPure/src/app/api/view"
 	"matuto.com/GoPure/src/app/dao"
 	"matuto.com/GoPure/src/app/model"
 	"matuto.com/GoPure/src/common"
@@ -22,6 +23,22 @@ func (service *DictDataService) GetDictDataByType(dictType string) ([]*model.Dic
 }
 
 // Page 获取字典数据分页列表
-func (service *DictDataService) Page(pageNum, pageSize int, query map[string]interface{}) (*common.PageInfo, error) {
-	return dao.DictData.Page(pageNum, pageSize, query)
+func (service *DictDataService) Page(req view.DictDataReqPageVO) (*common.PageInfo, error) {
+	return dao.DictData.Page(req)
+}
+
+func (service *DictDataService) Add(i *model.DictData) error {
+	return dao.DictData.Add(i)
+}
+
+func (service *DictDataService) Update(data *model.DictData) error {
+	return dao.DictData.Update(data)
+}
+
+func (service *DictDataService) Delete(id int) error {
+	return dao.DictData.Delete(id)
+}
+
+func (service *DictDataService) EditStatus(req view.DictDataStatusReqVO) error {
+	return dao.DictData.EditStatus(req)
 }
