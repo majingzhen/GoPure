@@ -31,7 +31,20 @@ layui.use(['table', 'form', 'layer'], function(){
             {field: 'name', title: '角色名称'},
             {field: 'code', title: '角色编码'},
             {field: 'description', title: '描述'},
-            {field: 'createTime', title: '创建时间', sort: true},
+            {
+                field: 'createTime',
+                title: '创建时间',
+                width: 180,
+                sort: true,
+                templet: "<span>{{d.createTime ==null?'':layui.util.toDateString(d.createTime, 'yyyy-MM-dd HH:mm:ss')}}</span>"
+            },
+            {
+                field: 'updateTime',
+                title: '更新时间',
+                width: 180,
+                sort: true,
+                templet: "<span>{{d.updateTime ==null?'':layui.util.toDateString(d.updateTime, 'yyyy-MM-dd HH:mm:ss')}}</span>"
+            },
             {title: '操作', toolbar: toolbarTpl}
         ]],
         page: true,

@@ -71,7 +71,20 @@ layui.use(['table', 'form', 'layer'], function(){
             {field: 'mobile', title: '手机号'},
             {field: 'email', title: '邮箱'},
             {field: 'status', title: '状态', templet: statusTpl, width: 100},
-            {field: 'createTime', title: '创建时间', sort: true},
+            {
+                field: 'createTime',
+                title: '创建时间',
+                width: 180,
+                sort: true,
+                templet: "<span>{{d.createTime ==null?'':layui.util.toDateString(d.createTime, 'yyyy-MM-dd HH:mm:ss')}}</span>"
+            },
+            {
+                field: 'updateTime',
+                title: '更新时间',
+                width: 180,
+                sort: true,
+                templet: "<span>{{d.updateTime ==null?'':layui.util.toDateString(d.updateTime, 'yyyy-MM-dd HH:mm:ss')}}</span>"
+            },
             {title: '操作', toolbar: toolbarTpl, width: 180}
         ]],
         page: true,
@@ -102,7 +115,7 @@ layui.use(['table', 'form', 'layer'], function(){
             delete data.field.status;
         }
         
-        table.reload('userTable', {
+        table.reload('optionTable', {
             where: data.field,
             page: {curr: 1}
         });

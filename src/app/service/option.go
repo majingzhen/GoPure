@@ -1,6 +1,7 @@
 package service
 
 import (
+	"matuto.com/GoPure/src/app/api/view"
 	"matuto.com/GoPure/src/app/dao"
 	"matuto.com/GoPure/src/app/model"
 	"matuto.com/GoPure/src/common"
@@ -22,6 +23,26 @@ func (service *OptionService) GetOptionByKey(key string) (*model.Option, error) 
 }
 
 // Page 获取选项分页列表
-func (service *OptionService) Page(pageNum, pageSize int, query map[string]interface{}) (*common.PageInfo, error) {
-	return dao.Option.Page(pageNum, pageSize, query)
+func (service *OptionService) Page(pageVo view.OptionReqPageVO) (*common.PageInfo, error) {
+	return dao.Option.Page(pageVo)
+}
+
+func (service *OptionService) GetList() ([]*model.Option, error) {
+	return dao.Option.GetList()
+}
+
+func (service *OptionService) Add(m *model.Option) error {
+	return dao.Option.Add(m)
+}
+
+func (service *OptionService) Update(m *model.Option) error {
+	return dao.Option.Update(m)
+}
+
+func (service *OptionService) Delete(id int) error {
+	return dao.Option.Delete(id)
+}
+
+func (service *OptionService) GetById(id int) (*model.Option, error) {
+	return dao.Option.GetById(id)
 }

@@ -77,6 +77,17 @@
                 ...options
             });
         },
+        // delete 请求
+        delete: function(url, data = {}, options = {}) {
+            return this.request({
+                url: url,
+                method: 'DELETE',
+                data: data,
+                contentType: 'application/json',
+                ...options
+            });
+        },
+        
 
         /**
          * 统一请求方法

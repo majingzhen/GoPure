@@ -36,8 +36,8 @@ type User struct {
 	Sex          string     `json:"sex" gorm:"type:char(1)"`
 	LoginIP      string     `json:"loginIp" gorm:"column:login_ip"`
 	LoginDate    *time.Time `json:"loginDate,omitempty" gorm:"column:login_date"`
-	CreateTime   time.Time  `json:"createTime" gorm:"column:create_time"`
-	UpdateTime   *time.Time `json:"updateTime" gorm:"column:update_time"`
+	CreateTime   time.Time  `json:"createTime" gorm:"autoCreateTime"`
+	UpdateTime   time.Time  `json:"updateTime" gorm:"autoCreateTime"`
 	CreateUserID *int       `json:"createUserId,omitempty" gorm:"column:create_user_id"`
 	UpdateUserID *int       `json:"updateUserId,omitempty" gorm:"column:update_user_id"`
 }

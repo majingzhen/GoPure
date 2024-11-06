@@ -2,6 +2,7 @@ package dao
 
 import (
 	"gorm.io/gorm"
+	"matuto.com/GoPure/src/app/api/view"
 	"matuto.com/GoPure/src/app/model"
 	"matuto.com/GoPure/src/common"
 	"matuto.com/GoPure/src/global"
@@ -26,21 +27,14 @@ func (dao *OptionDAO) GetOptionByKey(tx *gorm.DB, key string) (*model.Option, er
 }
 
 // Page 获取选项分页列表
-func (dao *OptionDAO) Page(pageNum, pageSize int, query map[string]interface{}) (*common.PageInfo, error) {
+func (dao *OptionDAO) Page(pageVo view.OptionReqPageVO) (*common.PageInfo, error) {
 	db := global.GormDao.Model(&model.Option{})
 
 	// 添加查询条件
-	if key, ok := query["key"].(string); ok && key != "" {
-		db = db.Where("`key` LIKE ?", "%"+key+"%")
+	if pageVo.Key != "" {
+		db = db.Where("`key` like ?", "%"+pageVo.Key+"%")
 	}
-	if title, ok := query["title"].(string); ok && title != "" {
-		db = db.Where("title LIKE ?", "%"+title+"%")
-	}
-	if identification, ok := query["identification"].(string); ok && identification != "" {
-		db = db.Where("identification = ?", identification)
-	}
-
-	page := common.CreatePageInfo(pageNum, pageSize)
+	page := common.CreatePageInfo(pageVo.PageNum, pageVo.PageSize)
 	if err := db.Count(&page.Total).Error; err != nil {
 		return nil, err
 	}
@@ -49,4 +43,31 @@ func (dao *OptionDAO) Page(pageNum, pageSize int, query map[string]interface{}) 
 	err := db.Offset(page.Offset).Limit(page.Limit).Find(&dataList).Error
 	page.Rows = dataList
 	return page, err
+}
+
+// GetList 获取选项列表
+func (dao *OptionDAO) GetList() ([]*model.Option, error) {
+	var list []*model.Option
+	err := global.GormDao.Find(&list).Error
+	return list, err
+}
+
+// Add 添加选项
+func (dao *OptionDAO) Add(m *model.Option) error {
+	return global.GormDao.Create(m).Error
+}
+
+// Update 更新选项
+func (dao *OptionDAO) Update(m *model.Option) error {
+	return global.GormDao.Updates(m).Error
+}
+
+// Delete 删除选项
+func (dao *OptionDAO) Delete(id int) error {
+	return global.GormDao.Delete(&model.Option{}, id).Error
+}
+
+// GetById 根据id获取选项
+func (dao *OptionDAO) GetById(id int) (*model.Option, error) {
+	return dao.GetOptionById(global.GormDao, id)
 }

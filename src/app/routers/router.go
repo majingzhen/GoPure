@@ -16,4 +16,6 @@ func InitRouter(r *gin.Engine) {
 	Menu.InitMenuRouter(r)
 	// 初始化字典路由
 	Dict.InitDictRouter(r)
+	// 初始化选项路由
+	Option.InitOptionRoutes(r)
 }

@@ -28,10 +28,10 @@ session:
 
 # 数据库配置
 datasource:
-  host: 127.0.0.1
+  host: 111.229.136.223
   port: 3306
   username: GoPure
-  password: 123456
+  password: DwAsfwRWhHP62W3K
   db_name: GoPure
   table_prefix: "p_"
   log_mode: true
