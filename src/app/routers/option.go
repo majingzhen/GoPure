@@ -11,7 +11,7 @@ var Option = new(OptionRouter)
 type OptionRouter struct{}
 
 func (r *OptionRouter) InitOptionRoutes(e *gin.Engine) {
-	options := e.Group("option").Use(middleware.AuthMiddleware())
+	options := e.Group("option").Use(middleware.AuthMiddleware()).Use(middleware.PermissionMiddleware())
 	{
 		options.GET("/page", api.Option.Page)
 		options.GET("/list", api.Option.List)
@@ -21,7 +21,7 @@ func (r *OptionRouter) InitOptionRoutes(e *gin.Engine) {
 		options.GET("/get/:id", api.Option.Get)
 
 		// 页面路由
-		options.GET("/", func(c *gin.Context) {
+		options.GET("/index", func(c *gin.Context) {
 			c.HTML(200, "option/index.html", nil)
 		})
 		options.GET("/add", func(c *gin.Context) {

@@ -12,10 +12,10 @@ type MenuRouter struct{}
 
 // InitMenuRouter 初始化菜单路由
 func (r *MenuRouter) InitMenuRouter(e *gin.Engine) {
-	menuRouter := e.Group("/menu").Use(middleware.AuthMiddleware())
+	menuRouter := e.Group("/menu").Use(middleware.AuthMiddleware()).Use(middleware.PermissionMiddleware())
 	{
 		// 页面路由
-		menuRouter.GET("/", api.Menu.JumpMenuView)
+		menuRouter.GET("/index", api.Menu.JumpMenuView)
 		menuRouter.GET("/add", api.Menu.JumpMenuAddView)
 		menuRouter.GET("/edit", api.Menu.JumpMenuEditView)
 

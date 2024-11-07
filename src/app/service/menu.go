@@ -170,3 +170,7 @@ func (s *MenuService) GetByUserId(userId int, backend string) ([]*view.MenuVO, e
 func (s *MenuService) UpdateStatus(id string, status string) error {
 	return dao.Menu.UpdateStatus(id, status)
 }
+
+func (s *MenuService) GetByRoleIds(ids []int) ([]model.Menu, error) {
+	return dao.Menu.GetByRoleIds(ids)
+}

@@ -1,11 +1,12 @@
 package service
 
 import (
-	"errors"
+	"github.com/gin-gonic/gin"
 	"matuto.com/GoPure/src/app/api/view"
 	"matuto.com/GoPure/src/app/dao"
 	"matuto.com/GoPure/src/app/model"
 	"matuto.com/GoPure/src/common"
+	"matuto.com/GoPure/src/common/errors"
 	"matuto.com/GoPure/src/global"
 )
 
@@ -15,7 +16,14 @@ type UserService struct{}
 
 // GetUserById 根据id获取用户
 func (service *UserService) GetUserById(id int) (*model.User, error) {
-	return dao.User.GetUserById(global.GormDao, id)
+	user, err := dao.User.GetUserById(global.GormDao, id)
+	if err != nil {
+		return nil, errors.HandleError(err, errors.DBError, "获取用户失败")
+	}
+	if user == nil {
+		return nil, errors.ErrUserNotFound.WithData(gin.H{"id": id})
+	}
+	return user, nil
 }
 
 // GetByAccount 根据账号获取用户
@@ -33,10 +41,10 @@ func (service *UserService) Add(user *model.User, roleIds []int) error {
 	// 1. 检查账号是否已存在
 	exists, err := dao.User.CheckAccountExists(user.Account)
 	if err != nil {
-		return err
+		return errors.HandleError(err, errors.DBError, "检查用户失败")
 	}
 	if exists {
-		return errors.New("账号已存在")
+		return errors.ErrUserExist.WithData(gin.H{"account": user.Account})
 	}
 
 	tx := global.GormDao.Begin()
@@ -65,7 +73,7 @@ func (service *UserService) Add(user *model.User, roleIds []int) error {
 // Update 更新用户
 func (service *UserService) Update(user *model.User, roleIds []int) error {
 	if user.Id == model.AdminId {
-		return errors.New("不允许修改管理员")
+		return errors.ErrAdminIsNotEdit
 	}
 	tx := global.GormDao.Begin()
 
@@ -102,10 +110,10 @@ func (service *UserService) Delete(loginUserId int, ids []int) error {
 	// 不允许删除自己
 	for _, id := range ids {
 		if id == loginUserId {
-			return errors.New("不允许删除自己")
+			return errors.ErrSelfDelete
 		}
 		if id == model.AdminId {
-			return errors.New("不允许删除超级管理员")
+			return errors.ErrAdminIsNotDelete
 		}
 	}
 	// 删除用户
@@ -128,7 +136,7 @@ func (service *UserService) Delete(loginUserId int, ids []int) error {
 func (service *UserService) UpdateStatus(id int, status string) error {
 	// 不允许禁用管理员
 	if id == model.AdminId {
-		return errors.New("不允许禁用管理员")
+		return errors.ErrAdminIsNotEdit
 	}
 	return dao.User.UpdateStatus(id, status)
 }
@@ -136,4 +144,30 @@ func (service *UserService) UpdateStatus(id int, status string) error {
 // UpdatePassword 更新用户密码
 func (service *UserService) UpdatePassword(id int, password, salt string) error {
 	return dao.User.UpdatePassword(id, password, salt)
+}
+
+// CheckPermission 检查用户是否有权限
+func (service *UserService) CheckPermission(loginUserId int, path string) bool {
+	// 如果是超级管理员角色,直接返回true
+	if loginUserId == model.AdminId {
+		return true
+	}
+	// 获取用户角色
+	roles, _ := Role.GetByUserId(loginUserId)
+	if len(roles) == 0 {
+		return false
+	}
+	// 获取角色菜单
+	roleIds := make([]int, len(roles))
+	for i, role := range roles {
+		roleIds[i] = role.Id
+	}
+	menus, _ := Menu.GetByRoleIds(roleIds)
+	// 判断是否有权限
+	for _, menu := range menus {
+		if menu.Url == path {
+			return true
+		}
+	}
+	return false
 }

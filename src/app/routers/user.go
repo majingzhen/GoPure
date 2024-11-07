@@ -11,10 +11,10 @@ var User = new(UserRouter)
 type UserRouter struct{}
 
 func (r *UserRouter) InitUserRouter(e *gin.Engine) {
-	userGroup := e.Group("user").Use(middleware.AuthMiddleware())
+	userGroup := e.Group("user").Use(middleware.AuthMiddleware()).Use(middleware.PermissionMiddleware())
 	{
 		// 页面路由
-		userGroup.GET("/", api.User.JumpUserView)
+		userGroup.GET("/index", api.User.JumpUserView)
 		userGroup.GET("/add", api.User.JumpUserAddView)
 		userGroup.GET("/edit", api.User.JumpUserEditView)
 

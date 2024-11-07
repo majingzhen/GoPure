@@ -26,7 +26,7 @@ func (r *Router) InitRouter() *gin.Engine {
 	e.Static("/uploads", "./public/uploads")
 	// 使用中间件
 	e.Use(middleware.GinLogger())
-	e.Use(gin.Recovery())
+	e.Use(middleware.ErrorHandler())
 	// 将LoginUserVO 类型 注册到gob中，允许在session中存储该类型
 	gob.Register(view.LoginUserVO{})
 	store := cookie.NewStore([]byte(global.Config.Session.Secret))

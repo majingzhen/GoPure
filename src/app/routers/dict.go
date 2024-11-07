@@ -11,7 +11,7 @@ var Dict = new(DictRouter)
 type DictRouter struct{}
 
 func (r *DictRouter) InitDictRouter(e *gin.Engine) {
-	dictGroup := e.Group("dict").Use(middleware.AuthMiddleware())
+	dictGroup := e.Group("dict").Use(middleware.AuthMiddleware()).Use(middleware.PermissionMiddleware())
 	{
 		// 页面路由
 		dictGroup.GET("/", func(c *gin.Context) {
@@ -46,7 +46,7 @@ func (r *DictRouter) InitDictRouter(e *gin.Engine) {
 		dictGroup.GET("/data/edit", func(c *gin.Context) {
 			c.HTML(200, "dict/data/edit.html", nil)
 		})
-		dictGroup.GET("/data", func(c *gin.Context) {
+		dictGroup.GET("/data/index", func(c *gin.Context) {
 			c.HTML(200, "dict/data/index.html", nil)
 		})
 	}

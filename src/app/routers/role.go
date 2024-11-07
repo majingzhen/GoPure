@@ -11,9 +11,9 @@ var Role = new(RoleRouter)
 type RoleRouter struct{}
 
 func (r *RoleRouter) InitRoleRouter(e *gin.Engine) {
-	roleGroup := e.Group("role").Use(middleware.AuthMiddleware())
+	roleGroup := e.Group("role").Use(middleware.AuthMiddleware()).Use(middleware.PermissionMiddleware())
 	{
-		roleGroup.GET("/", api.Role.JumpRoleView)
+		roleGroup.GET("/index", api.Role.JumpRoleView)
 		roleGroup.GET("/add", api.Role.JumpRoleAddView)
 		roleGroup.GET("/edit", api.Role.JumpRoleEditView)
 		roleGroup.GET("/auth", api.Role.JumpRoleAuthView)

@@ -71,6 +71,9 @@ func FailWithData(data interface{}, c *gin.Context) {
 func FailWithDetailed(message string, data interface{}, c *gin.Context) {
 	Result(ERROR, message, data, c)
 }
+func FailWithDetailedCode(code int, message string, data interface{}, c *gin.Context) {
+	Result(code, message, data, c)
+}
 
 // FailWithCode 失败响应，自定义错误码和消息
 func FailWithCode(code int, message string, c *gin.Context) {

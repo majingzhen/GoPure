@@ -14,6 +14,7 @@ var User = new(UserAPI)
 type UserAPI struct{}
 
 // JumpUserView 跳转用户管理页面
+// @RequirePermission("system:user:index")
 func (api *UserAPI) JumpUserView(c *gin.Context) {
 	response.JumpView(c, "user/index.html")
 }
@@ -50,10 +51,11 @@ func (api *UserAPI) Get(c *gin.Context) {
 		response.FailWithMessage("参数错误", c)
 		return
 	}
+	// 调用 service，错误会被中间件捕获并处理
 	user, err := service.User.GetUserById(id)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
-		return
+		// 直接抛出 service 层的错误
+		panic(err)
 	}
 	// 获取用户角色
 	roles, err := service.Role.GetByUserId(id)
@@ -162,8 +164,8 @@ func (api *UserAPI) UpdateStatus(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	loginUserId, _ := c.Get("userId")
-	if loginUserId.(int) == req.Id {
+	loginUserId := c.GetInt("userId")
+	if loginUserId == req.Id {
 		response.FailWithMessage("不能修改自己的状态", c)
 		return
 	}
